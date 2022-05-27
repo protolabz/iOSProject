@@ -472,23 +472,6 @@ var strInstrctions = ""
 //
 //                        for j in 0..<json["menu_addon_with_sizes"][i]["sizes"].count
 //                        {
-//                            self.arrOfAddOn.append("\(json["menu_addon_with_sizes"][i]["name"])" + "**"  +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_size"])" + "**" +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_price"])")
-//                        }
-                        self.btnAdd.isEnabled = true
-                    }
-//                    for i in 0..<self.arrOfAddOn.count
-//                    {
-//
-//                        let strName = "\(self.arrOfAddOn[i])".components(separatedBy: "**")
-//
-//                        let str1 = strName[1]
-//
-//                        if("\(json["menu_sizes"][i]["menu_size"])".count == 1)
-//                        {
-//                            self.selectedSizeForAddOn = "\(json["menu_sizes"][0]["menu_size"])"
-//                        }
-//                        if(self.selectedSizeForAddOn == str1 )
-//                        {
 //                            self.arrOfJsonAddon.append(self.arrOfAddOn[i])
 //                            print("arrOfJsonAddon")
 //                            print(self.arrOfJsonAddon)
