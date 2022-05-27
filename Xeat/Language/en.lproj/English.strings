@@ -1,0 +1,42 @@
+/* 
+  English.strings
+  Xeat
+
+  Created by apple on 11/02/22.
+  
+*/
+"Phone number" = "Phone number";
+"Pick up" = "Pick up";
+"Delivery" = "Delivery";
+"Open" = "Open";
+"Close" = "Close";
+"Food Hygenic rating" = "Food Hygenic rating";
+"Delivery in" = "Delivery in";
+"minutes" = "minutes";
+"min order" = "min order";
+"Success" = "Success";
+"Phone" = "Phone";
+"Password" = "Password";
+"Name" = "Name";
+"Email Address" = "Email Address";
+"xxxxxxxxxx" = "xxxxxxxxxx";
+"Reset Password" = "Reset Password";
+"Cancel" = "Cancel";
+"Reset" = "Reset";
+"Enter password" = "Enter password";
+"Delete" = "Delete";
+"Are you sure you want to delete this?" = "Are you sure you want to delete this?";
+"Cancelled" = "Cancelled";
+"Rate" = "Rate";
+"Rated" = "Rated";
+"Internet connection" = "Internet connection";
+"It seems your internet connection lost. Please connect and try again" = "It seems your internet connection lost. Please connect and try again";
+" Reward penny" = " Reward penny";
+"Status : Closed" = "Status : Closed";
+"Response" = "Response";
+"Status : Open" = "Status : Open";
+"Order id #" = "Order id #";
+"Status : Pending" = "Status : Pending";
+"Refund successful" = "Refund successful";
+"Wait" = "Wait";
+"This address saved as primary address. Do you want to delete this?" = "This address saved as primary address. Do you want to delete this?";

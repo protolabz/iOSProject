@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="124" id="KGk-i7-Jjw" customClass="HelpRevertViewCell" customModule="Xeat" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="124"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="124"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t4z-6Y-lwH">
+                        <rect key="frame" x="0.0" y="2" width="320" height="120"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Delivery " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C27-A0-g7g">
+                                <rect key="frame" x="16" y="8" width="59" height="20.5"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="15"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Dec 13, 2021 " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jO9-4J-qjB">
+                                <rect key="frame" x="223" y="8" width="81" height="18"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="13"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Pr-It-SEC">
+                                <rect key="frame" x="16" y="26.5" width="87" height="26"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="13"/>
+                                <state key="normal" title="Status : Closed">
+                                    <color key="titleColor" red="0.86666666670000003" green="0.1176470588" blue="0.066666666669999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Delivery fwef wef wefwef wefewvew cewfewf ewf ewfewfew f ewf ewfwef wefe wfwefwefwefew few fewfewfwefew fe w " lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ne1-fB-bNh">
+                                <rect key="frame" x="16" y="50.5" width="288" height="61.5"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="15"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Ne1-fB-bNh" secondAttribute="trailing" constant="16" id="0t5-7H-Uy4"/>
+                            <constraint firstItem="Ne1-fB-bNh" firstAttribute="top" secondItem="7Pr-It-SEC" secondAttribute="bottom" constant="-2" id="58h-45-0cF"/>
+                            <constraint firstItem="jO9-4J-qjB" firstAttribute="top" secondItem="t4z-6Y-lwH" secondAttribute="top" constant="8" id="ICF-p4-keZ"/>
+                            <constraint firstItem="7Pr-It-SEC" firstAttribute="top" secondItem="C27-A0-g7g" secondAttribute="bottom" constant="-2" id="KVg-St-ix5"/>
+                            <constraint firstItem="C27-A0-g7g" firstAttribute="leading" secondItem="t4z-6Y-lwH" secondAttribute="leading" constant="16" id="Pg9-cs-qMY"/>
+                            <constraint firstItem="C27-A0-g7g" firstAttribute="top" secondItem="t4z-6Y-lwH" secondAttribute="top" constant="8" id="Vc3-67-BrL"/>
+                            <constraint firstAttribute="bottom" secondItem="Ne1-fB-bNh" secondAttribute="bottom" constant="8" id="cZG-a7-a7y"/>
+                            <constraint firstItem="7Pr-It-SEC" firstAttribute="leading" secondItem="t4z-6Y-lwH" secondAttribute="leading" constant="16" id="e6v-bb-gS4"/>
+                            <constraint firstAttribute="trailing" secondItem="jO9-4J-qjB" secondAttribute="trailing" constant="16" id="qwc-GQ-5wh"/>
+                            <constraint firstItem="Ne1-fB-bNh" firstAttribute="leading" secondItem="t4z-6Y-lwH" secondAttribute="leading" constant="16" id="sbd-CY-fvd"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="t4z-6Y-lwH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="2" id="Pak-OS-wwK"/>
+                    <constraint firstAttribute="bottom" secondItem="t4z-6Y-lwH" secondAttribute="bottom" constant="2" id="XET-vu-SOF"/>
+                    <constraint firstItem="t4z-6Y-lwH" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="bPT-vt-FMs"/>
+                    <constraint firstAttribute="trailing" secondItem="t4z-6Y-lwH" secondAttribute="trailing" id="rUk-Fg-tuN"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="helpDecr" destination="Ne1-fB-bNh" id="oQB-SG-i4I"/>
+                <outlet property="helpStatus" destination="7Pr-It-SEC" id="8u3-Ki-14a"/>
+                <outlet property="helpTitle" destination="C27-A0-g7g" id="AR8-Jr-xt6"/>
+                <outlet property="txtDate" destination="jO9-4J-qjB" id="f3S-E9-5Tk"/>
+                <outlet property="viewUi" destination="t4z-6Y-lwH" id="6wG-hU-RsE"/>
+            </connections>
+            <point key="canvasLocation" x="76.811594202898561" y="112.5"/>
+        </tableViewCell>
+    </objects>
+</document>

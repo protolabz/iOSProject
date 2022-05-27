@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="CuisineCell" customModule="Xeat" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="211" height="106"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="211" height="106"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GbL-af-UlH">
+                        <rect key="frame" x="2" y="1" width="207" height="104"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cuisine name here" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N9a-wT-i4C">
+                                <rect key="frame" x="8" y="52" width="125" height="0.0"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="0.0"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="AbR-LG-9a6">
+                                <rect key="frame" x="149" y="27" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="0p3-Z3-stK"/>
+                                    <constraint firstAttribute="height" constant="50" id="3g2-NS-HZN"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="N9a-wT-i4C" firstAttribute="leading" secondItem="GbL-af-UlH" secondAttribute="leading" constant="8" id="6Wh-hZ-UBV"/>
+                            <constraint firstItem="AbR-LG-9a6" firstAttribute="leading" secondItem="N9a-wT-i4C" secondAttribute="trailing" constant="16" id="97m-NJ-cNb"/>
+                            <constraint firstItem="AbR-LG-9a6" firstAttribute="centerY" secondItem="GbL-af-UlH" secondAttribute="centerY" id="qwV-I1-dRF"/>
+                            <constraint firstItem="N9a-wT-i4C" firstAttribute="centerY" secondItem="GbL-af-UlH" secondAttribute="centerY" id="uZV-TM-aBw"/>
+                            <constraint firstAttribute="trailing" secondItem="AbR-LG-9a6" secondAttribute="trailing" constant="8" id="uxF-pH-hKz"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="GbL-af-UlH" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="1" id="8dD-ql-Dgq"/>
+                <constraint firstItem="GbL-af-UlH" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="2" id="Vvq-sl-bAv"/>
+                <constraint firstAttribute="bottom" secondItem="GbL-af-UlH" secondAttribute="bottom" constant="1" id="XXv-0d-e5T"/>
+                <constraint firstAttribute="trailing" secondItem="GbL-af-UlH" secondAttribute="trailing" constant="2" id="sxO-07-Amc"/>
+            </constraints>
+            <size key="customSize" width="211" height="106"/>
+            <connections>
+                <outlet property="imgCuisine" destination="AbR-LG-9a6" id="jca-xM-6tT"/>
+                <outlet property="txtName" destination="N9a-wT-i4C" id="8bu-6g-bPB"/>
+                <outlet property="viewUi" destination="GbL-af-UlH" id="lg2-Wm-HKp"/>
+            </connections>
+            <point key="canvasLocation" x="229.71014492753625" y="145.98214285714286"/>
+        </collectionViewCell>
+    </objects>
+</document>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>897579559280-ma595uhminna84okr4qr4786ovkqr3aq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.897579559280-ma595uhminna84okr4qr4786ovkqr3aq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>897579559280-1apc0ifgbqikt5dpttn61i6940a7m99c.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBp4yl2RdiAYVfXoSl0om_7pw-vrHwZINA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>897579559280</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.food.xeat.Xeat</string>
+	<key>PROJECT_ID</key>
+	<string>xeat-4391e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>xeat-4391e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:897579559280:ios:21d0307ae0306cb202c7b5</string>
+	<key>DATABASE_URL</key>
+	<string>https://xeat-4391e-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

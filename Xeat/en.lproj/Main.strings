@@ -1,0 +1,87 @@
+
+/* Class = "UIButton"; normalTitle = "Verify"; ObjectID = "0UZ-FT-9Ve"; */
+"0UZ-FT-9Ve.normalTitle" = "Verify";
+
+/* Class = "UIButton"; normalTitle = "Forgot Password?"; ObjectID = "327-DV-q8j"; */
+"327-DV-q8j.normalTitle" = "Forgot Password?";
+
+/* Class = "UILabel"; text = "Already have an account?"; ObjectID = "6GX-k3-TJK"; */
+"6GX-k3-TJK.text" = "Already have an account?";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "6pb-hf-uVA"; */
+"6pb-hf-uVA.placeholder" = "Password";
+
+/* Class = "UITextField"; placeholder = "XXXX"; ObjectID = "9XY-Hn-ZQK"; */
+"9XY-Hn-ZQK.placeholder" = "XXXX";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "EPf-rz-ted"; */
+"EPf-rz-ted.normalTitle" = "Login";
+
+/* Class = "UIButton"; normalTitle = "Create an account"; ObjectID = "Fvs-ZT-LUf"; */
+"Fvs-ZT-LUf.normalTitle" = "Create an account";
+
+/* Class = "UILabel"; text = "Add your details to sign up"; ObjectID = "Lhd-K8-XnZ"; */
+"Lhd-K8-XnZ.text" = "Add your details to sign up";
+
+/* Class = "UIButton"; normalTitle = "Guest User"; ObjectID = "Lkz-gF-PSd"; */
+"Lkz-gF-PSd.normalTitle" = "Guest User";
+
+/* Class = "UILabel"; text = "Verify you one time password"; ObjectID = "MAi-2j-tu9"; */
+"MAi-2j-tu9.text" = "Verify you one time password";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "ONo-Au-VEC"; */
+"ONo-Au-VEC.normalTitle" = "Login";
+
+/* Class = "UILabel"; text = "Add your details to login"; ObjectID = "Q4F-92-uE8"; */
+"Q4F-92-uE8.text" = "Add your details to login";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "Skw-t1-EHd"; */
+"Skw-t1-EHd.normalTitle" = "Sign Up";
+
+/* Class = "UITextField"; placeholder = "xxxxxxxxxx"; ObjectID = "X6K-XJ-5XT"; */
+"X6K-XJ-5XT.placeholder" = "xxxxxxxxxx";
+
+/* Class = "UILabel"; text = "Sign Up"; ObjectID = "bsf-N6-5ve"; */
+"bsf-N6-5ve.text" = "Sign Up";
+
+/* Class = "UIButton"; normalTitle = "Resend OTP"; ObjectID = "dlR-T8-p4c"; */
+"dlR-T8-p4c.normalTitle" = "Resend OTP";
+
+/* Class = "UILabel"; text = "Please enter the verification code sent to"; ObjectID = "fIy-7L-GQi"; */
+"fIy-7L-GQi.text" = "Please enter the verification code sent to";
+
+/* Class = "UILabel"; text = "Don't join yet?"; ObjectID = "foZ-7c-mqG"; */
+"foZ-7c-mqG.text" = "Don't join yet?";
+
+/* Class = "UITextField"; placeholder = "User Name"; ObjectID = "jqe-wI-SKW"; */
+"jqe-wI-SKW.placeholder" = "User Name";
+
+/* Class = "UILabel"; text = "Login"; ObjectID = "kEg-mv-8DB"; */
+"kEg-mv-8DB.text" = "Login";
+
+/* Class = "UILabel"; text = "abc@gmail.com"; ObjectID = "oAJ-Sq-je1"; */
+"oAJ-Sq-je1.text" = "abc@gmail.com";
+
+/* Class = "UIButton"; normalTitle = "Pay For Membership"; ObjectID = "pHy-SS-7Fs"; */
+"pHy-SS-7Fs.normalTitle" = "Pay For Membership";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "pYU-6R-uJC"; */
+"pYU-6R-uJC.placeholder" = "Password";
+
+/* Class = "UIButton"; normalTitle = "  I accept terms & conditions"; ObjectID = "sZN-mg-zFU"; */
+"sZN-mg-zFU.normalTitle" = "  I accept terms & conditions";
+
+/* Class = "UITextField"; placeholder = "Email Address"; ObjectID = "t6I-RX-fdP"; */
+"t6I-RX-fdP.placeholder" = "Email Address";
+
+/* Class = "UITextField"; placeholder = "xxxxxxxxxx"; ObjectID = "vGo-LA-NRc"; */
+"vGo-LA-NRc.placeholder" = "xxxxxxxxxx";
+
+/* Class = "UILabel"; text = "Discover the best foods from over 1,000 restaurants and fast delivery to your doorstep"; ObjectID = "vJz-2P-EBi"; */
+"vJz-2P-EBi.text" = "Discover the best foods from over 1,000 restaurants and fast delivery to your doorstep";
+
+/* Class = "UILabel"; text = "Verify OTP"; ObjectID = "wNA-ce-agO"; */
+"wNA-ce-agO.text" = "Verify OTP";
+
+/* Class = "UILabel"; text = "Login"; ObjectID = "yQy-Tz-GTx"; */
+"yQy-Tz-GTx.text" = "Login";
