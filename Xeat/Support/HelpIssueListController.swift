@@ -31,8 +31,13 @@ class HelpIssueListController: UIViewController,  UITableViewDelegate,UITableVie
        self.tableView.separatorStyle = .none
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
-       
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         orderIssueAPI()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     
@@ -53,13 +58,18 @@ class HelpIssueListController: UIViewController,  UITableViewDelegate,UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-     
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         selectedIssueId = "\(arrOfTrans[indexPath.row]["issu_type"])"
        if(apiHit == 0)
        {
         apiHit = 1
         orderSubmitIssueAPI()
        }
+        }
+        else{
+            alertInternet()
+        }
         
     }
     

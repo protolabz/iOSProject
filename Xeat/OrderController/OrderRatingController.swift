@@ -20,12 +20,31 @@ class OrderRatingController: UIViewController {
         _ = self.navigationController?.popViewController(animated: true)
         }
         else{
-            self.navigationController?.popToRootViewController(animated: true)
+           
+            if(self.currentReachabilityStatus != .notReachable)
+            {
+            if(strRestStar == "0" && strDriverStar == "0")
+            {
+                
+                btnSubmit2.isEnabled = false
+                orderCancelAPI()
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            
+            }
+            else
+            {
+                alertInternet()
+            }
+           
+        
 
         }
     }
     @IBOutlet weak var txtRestName: UILabel!
     
+    @IBOutlet weak var txtRateRest: UILabel!
+    @IBOutlet weak var txtHowRest: UILabel!
     @IBOutlet weak var txtRestLocation: UILabel!
     
     @IBOutlet weak var txtUserLocation: UILabel!
@@ -48,26 +67,56 @@ class OrderRatingController: UIViewController {
     
     @IBOutlet weak var txtHowDriver: UILabel!
     @IBAction func btnSubmit2(_ sender: Any) {
-        if(strRestStar == "0" && strDriverStar == "0")
+        if(self.currentReachabilityStatus != .notReachable)
         {
-          alertFailure(title: "Star unselect", Message: "Please select star for Driver and Restaurant")
-        }
-        else{
+        if(strRestStar != "0" && strDriverStar != "0")
+        {
+            
             btnSubmit2.isEnabled = false
             doRatingDetailAPI()
+        }
+        else{
+         
+            if(strModeType == 1)
+            {
+                alertFailure(title: "Rate!", Message: "Please select star for driver and grocery store")
+            }
+            else{
+                alertFailure(title: "Rate!", Message: "Please select star for driver and restaurant")
+            }
+        }
+        }
+        else
+        {
+            alertInternet()
         }
        
     }
     
     @IBOutlet weak var btnSubmit2: UIButton!
     @IBAction func btnSubmit1(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(strRestStar == "0")
         {
-          alertFailure(title: "Star unselect", Message: "Please select star for Restaurant")
+            if(strModeType == 1)
+            {
+                alertFailure(title: "Rate!", Message: "Please select star for grocery store")
+            }
+            else{
+                alertFailure(title: "Rate!", Message: "Please select star for Restaurant")
+            }
+            
+          
         }
         else{
             btnSubmit1.isEnabled = false
             doRatingDetailAPI()
+        }
+        }
+        else
+        {
+            alertInternet()
         }
     }
     @IBOutlet weak var btnSubmit1: UIButton!
@@ -81,7 +130,7 @@ class OrderRatingController: UIViewController {
     var starSelect = ""
     var driverStar = ""
     var screenType = ""
-    
+    var strModeType = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,9 +154,13 @@ class OrderRatingController: UIViewController {
         txtHowDriver.isHidden = true
         txtRateDriverName.isHidden = true
         driverRating.isHidden = true
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         orderDetailAPI()
-        
+        }
+        else{
+            alertInternet()
+        }
         restRating.didFinishTouchingCosmos = { rating in
             print(rating)
             self.strRestStar = "\(rating)"
@@ -197,7 +250,7 @@ class OrderRatingController: UIViewController {
         
         strRestId = "\(jsonData["data"]["res_id"])"
         
-        txtRateTestname.text = "Rate restaurant : " + "\(jsonData["data"]["res_name"])"
+        
 
         txtHeading.text = "Order id #" + strOrderId
         
@@ -288,6 +341,18 @@ class OrderRatingController: UIViewController {
             driverRating.rating = Double(driverStar)!
             btnSubmit2.isHidden = true
             btnSubmit1.isHidden = true
+        }
+        print("\(jsonData["data"]["type"])")
+        if("\(jsonData["data"]["type"])" == "1")
+        {
+            txtHowRest.text = "How was the grocery store?"
+          ///  txtRateRest.text = "Rate grocery store"
+            txtRateTestname.text = "Rate grocery store : " + "\(jsonData["data"]["res_name"])"
+            strModeType = 1
+        }
+        else{
+            strModeType = 0
+            txtRateTestname.text = "Rate restaurant : " + "\(jsonData["data"]["res_name"])"
         }
         
     }

@@ -84,7 +84,7 @@ class HomeGroceryController: UITabBarController, UITabBarControllerDelegate {
     {
        
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "type" : "1"]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.cartDetailAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -107,6 +107,7 @@ class HomeGroceryController: UITabBarController, UITabBarControllerDelegate {
                     // In this case we want to modify the badge number of the third tab:
                     let tabItem = tabItems[2]
                     tabItem.badgeValue = "\(json["cart_items"])"
+                    UserDefaults.standard.setValue( "\(json["data"][0]["cart_id"])", forKey: Constant.CART_ID)
                 }
             }
            

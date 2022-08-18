@@ -25,7 +25,7 @@ class OrderHistoryController: UIViewController ,  UITableViewDelegate,UITableVie
     var arrOfTrans : [JSON] = []
     override func viewDidLoad() {
         super.viewDidLoad()
-            
+       
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
         
@@ -37,12 +37,13 @@ class OrderHistoryController: UIViewController ,  UITableViewDelegate,UITableVie
         tableView.delegate = self
         tableView.dataSource = self
         self.tableView.separatorStyle = .none
-        
+        self.tableView.isUserInteractionEnabled = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         if(currentReachabilityStatus != .notReachable)
         {
+            
             orderHistoryAPI()
         }
         else{
@@ -133,8 +134,16 @@ class OrderHistoryController: UIViewController ,  UITableViewDelegate,UITableVie
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if self.viewIfLoaded?.window != nil {
         selectedPosition = indexPath.row
+            if(self.currentReachabilityStatus != .notReachable)
+            {
           selectedOrderID = "\(arrOfTrans[indexPath.row]["driverContact"])"
+            self.tableView.isUserInteractionEnabled = false
           performSegue(withIdentifier: "rating", sender: nil)
+            }
+            else
+            {
+                alertInternet()
+            }
     }
     }
     

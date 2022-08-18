@@ -23,7 +23,13 @@ var strDeliveryType = ""
         _ = self.navigationController?.popViewController(animated: true)
     }
     @IBAction func btnAddNewCard(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         didRequestPayWithCard()
+        }
+        else{
+            alertInternet()
+        }
     }
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
@@ -38,7 +44,13 @@ var strDeliveryType = ""
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
     }
     override func viewWillAppear(_ animated: Bool) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         savedCardAPI()
+        }
+        else{
+            alertInternet()
+        }
     }
     
 
@@ -66,7 +78,13 @@ var strDeliveryType = ""
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
      
         tableView.isUserInteractionEnabled = false
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         chargeCard(strCardId: "\(self.arrOfTrans[indexPath.row]["id"])")
+        }
+        else{
+            alertInternet()
+        }
 //        selectedIssueId = "\(arrOfTrans[indexPath.row]["issu_type"])"
 //       if(apiHit == 0)
 //       {
@@ -154,7 +172,13 @@ var strDeliveryType = ""
                // self.alertFailure(title: "Card saved", Message: "\(json["data"]["message"])")
               //  completion("success", nil)
                 self.dismiss(animated: true)
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.placeOrderAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
             }
             else
             {
@@ -238,7 +262,7 @@ var strDeliveryType = ""
     {
         let refreshAlert = UIAlertController(title: "Order Placed", message: "Order has been placed successfully. \n Your order id is \(str)", preferredStyle: UIAlertController.Style.alert)
        
-        refreshAlert.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (action: UIAlertAction!) in
+        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
             self.flagScreen = 2
             self.strOrderId = str

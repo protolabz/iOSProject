@@ -24,6 +24,7 @@ class SelectionController: UIViewController {
         UserDefaults.standard.set("",forKey: Constant.PROFILE_PICTURE)
 
         UserDefaults.standard.set("1", forKey: Constant.IS_LOGGEDIN)
+        UserDefaults.standard.set("0", forKey: Constant.SELECTION_MODE)
         UserDefaults.standard.set("+0000000000", forKey: Constant.CONTACT_NO)
         UserDefaults.standard.set("2", forKey: Constant.USER_UNIQUE_ID)
         

@@ -38,12 +38,35 @@ class SelectModeController: UIViewController {
     
 @objc func viewG()
 {
- //   performSegue(withIdentifier: "homeg", sender: nil)
+    let mode =   "\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "0")"
+    if(mode == "0")
+    {
+        removeCartDataAPI()
+    }
+    
+    UserDefaults.standard.setValue("1", forKey: Constant.SELECTION_MODE)
+    UserDefaults.standard.setValue("0", forKey: Constant.AGE_LIMIT)
+    UserDefaults.standard.setValue( "0", forKey: Constant.CART_ID)
+
+
+   performSegue(withIdentifier: "homeg", sender: nil)
+    
 }
    
     @objc func viewF()
     {
-        performSegue(withIdentifier: "home", sender: nil)
+        let mode =   "\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "0")"
+          if(mode == "1")
+          {
+              removeCartDataAPI()
+          }
+          
+        UserDefaults.standard.setValue("0", forKey: Constant.SELECTION_MODE)
+        UserDefaults.standard.setValue("0", forKey: Constant.AGE_LIMIT)
+        UserDefaults.standard.setValue( "0", forKey: Constant.CART_ID)
+
+
+      performSegue(withIdentifier: "home", sender: nil)
     }
     
     func otpCall()
@@ -52,19 +75,19 @@ class SelectModeController: UIViewController {
         let parameters = ["accesstoken" : Constant.APITOKEN]
         
         APIsManager.shared.requestService(withURL: Constant.groceryFoodImageAPI, method: .post, param: parameters, viewController: self) { (json) in
-         print(json)
+         //print(json)
             if("\(json["code"])" == "200")
             {
                 let strImageURL =
                     "\(json["data"][0]["grocery_image"])"
-                print(strImageURL)
+                
                 if(strImageURL.count>2){
                     let urlYourURL = URL (string:strImageURL )
                     self.imgaGrocery.loadurl(url: urlYourURL!)
                 }
                 let strImageURL2 =
                     "\(json["data"][0]["food_image"])"
-                print(strImageURL2)
+             
                 if(strImageURL2.count>2){
                     let urlYourURL2 = URL (string:strImageURL2 )
                     self.imgFood.loadurl(url: urlYourURL2!)
@@ -77,5 +100,26 @@ class SelectModeController: UIViewController {
             
            
     }
+    }
+    func removeCartDataAPI()
+    {
+        let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN]
+        
+        print("parameters",parameters)
+        APIsManager.shared.requestService(withURL: Constant.removeCartDataAPI, method: .post, param: parameters, viewController: self) { (json) in
+            print(json)
+            
+            if("\(json["status"])" == "201")
+            {
+//                self.alertFailure(title: "Invalid", Message: "\(json["message"])")
+            }
+            else
+            {
+               
+//                self.alertFailure(title: "Enjoy!!!", Message: "You can enjoy the best meals offered by this restaurant")
+            }
+            
+        }
     }
 }

@@ -19,25 +19,27 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fgT-uC-ts5">
                         <rect key="frame" x="0.0" y="0.0" width="153" height="170"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MMz-tU-hqg">
-                                <rect key="frame" x="0.0" y="0.0" width="153" height="133"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MMz-tU-hqg">
+                                <rect key="frame" x="8" y="8" width="137" height="85"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="kcw-AL-RjK"/>
+                                </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JE1-Fq-xOV">
-                                <rect key="frame" x="16" y="141" width="121" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JE1-Fq-xOV">
+                                <rect key="frame" x="4" y="94" width="145" height="16.5"/>
+                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="JE1-Fq-xOV" secondAttribute="bottom" constant="8" id="0m3-RL-tv2"/>
-                            <constraint firstAttribute="trailing" secondItem="JE1-Fq-xOV" secondAttribute="trailing" constant="16" id="6HP-Cs-ghV"/>
-                            <constraint firstItem="MMz-tU-hqg" firstAttribute="leading" secondItem="fgT-uC-ts5" secondAttribute="leading" id="Jgx-9f-GTU"/>
-                            <constraint firstItem="JE1-Fq-xOV" firstAttribute="top" secondItem="MMz-tU-hqg" secondAttribute="bottom" constant="8" id="MgR-Pa-g8w"/>
-                            <constraint firstItem="MMz-tU-hqg" firstAttribute="top" secondItem="fgT-uC-ts5" secondAttribute="top" id="OPh-kP-jIf"/>
-                            <constraint firstItem="JE1-Fq-xOV" firstAttribute="leading" secondItem="fgT-uC-ts5" secondAttribute="leading" constant="16" id="cf3-i6-NSO"/>
-                            <constraint firstAttribute="trailing" secondItem="MMz-tU-hqg" secondAttribute="trailing" id="gnh-9S-47I"/>
+                            <constraint firstAttribute="trailing" secondItem="JE1-Fq-xOV" secondAttribute="trailing" constant="4" id="6HP-Cs-ghV"/>
+                            <constraint firstItem="MMz-tU-hqg" firstAttribute="leading" secondItem="fgT-uC-ts5" secondAttribute="leading" constant="8" id="Jgx-9f-GTU"/>
+                            <constraint firstItem="MMz-tU-hqg" firstAttribute="top" secondItem="fgT-uC-ts5" secondAttribute="top" constant="8" id="OPh-kP-jIf"/>
+                            <constraint firstItem="JE1-Fq-xOV" firstAttribute="top" secondItem="MMz-tU-hqg" secondAttribute="bottom" constant="1" id="Yrm-E1-WOY"/>
+                            <constraint firstItem="JE1-Fq-xOV" firstAttribute="leading" secondItem="fgT-uC-ts5" secondAttribute="leading" constant="4" id="cf3-i6-NSO"/>
+                            <constraint firstAttribute="trailing" secondItem="MMz-tU-hqg" secondAttribute="trailing" constant="8" id="gnh-9S-47I"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -53,6 +55,7 @@
             <connections>
                 <outlet property="imgGrocery" destination="MMz-tU-hqg" id="tbs-fm-OaF"/>
                 <outlet property="txtName" destination="JE1-Fq-xOV" id="HTO-XN-Rvy"/>
+                <outlet property="viewUi" destination="fgT-uC-ts5" id="0ah-PF-j3K"/>
             </connections>
             <point key="canvasLocation" x="187.68115942028987" y="125.89285714285714"/>
         </collectionViewCell>

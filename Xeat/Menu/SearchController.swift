@@ -158,8 +158,13 @@ class SearchController: UIViewController,  UITableViewDelegate,UITableViewDataSo
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
         
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         performSegue(withIdentifier: "menu", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

@@ -102,7 +102,7 @@ class HomeTabController: UITabBarController, UITabBarControllerDelegate
                     let tabItem = tabItems[2]
                     tabItem.badgeValue = "\(json["cart_items"])"
                 }
-                
+                UserDefaults.standard.setValue( "\(json["data"][0]["cart_id"])", forKey: Constant.CART_ID)
             }
           
             else
@@ -112,6 +112,8 @@ class HomeTabController: UITabBarController, UITabBarControllerDelegate
                     // In this case we want to modify the badge number of the third tab:
                     let tabItem = tabItems[2]
                     tabItem.badgeValue = nil
+                    UserDefaults.standard.setValue( "0", forKey: Constant.CART_ID)
+
                 }
             }
            

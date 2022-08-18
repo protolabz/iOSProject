@@ -131,9 +131,7 @@ class ChatController: UIViewController,UITableViewDelegate,UITableViewDataSource
     {
         if(currentReachabilityStatus != .notReachable)
         {
-            
                 sendMessage()
-            
         }
         else{
             alertInternet()

@@ -12,6 +12,7 @@ import AlamofireImage
 
 class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,  UITableViewDelegate,UITableViewDataSource , UIScrollViewDelegate , UIGestureRecognizerDelegate{
     
+    @IBOutlet weak var txtOrderID: UILabel!
     var selectedIndex = -1
     var screenType = 0
     var strOrderId = ""
@@ -19,13 +20,31 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
     var strLongitude = ""
     var strTopName = ""
     var timer = Timer()
+    var strOrderId2 = ""
     @IBOutlet weak var collectionCuisine: UICollectionView!
     @IBOutlet weak var viewNoData: UIView!
     var refreshControl : UIRefreshControl!
     @IBOutlet weak var imgSearch: UIImageView!
     @IBAction func btnTrackOrder(_ sender: Any) {
+        
         screenType = 2
-        performSegue(withIdentifier: "track", sender: nil)
+        if(self.currentReachabilityStatus != .notReachable)
+        {
+        let OrderCount = UserDefaults.standard.string(forKey: Constant.ORDER_COUNT)
+        if OrderCount == "2"
+        {
+            alertTwoOrder()
+            
+        }
+        else{
+        screenType = 2
+            performSegue(withIdentifier: "track", sender: nil)
+        }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     @IBOutlet weak var txtOrderStatus: UILabel!
     @IBOutlet weak var viewTrackOrder: UIView!
@@ -158,8 +177,13 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
         imgSearch.isUserInteractionEnabled = true
         imgSearch.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.searchCall)))
         viewAddress.layer.cornerRadius = 10
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         cuisineAPI()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     @objc func functionName (notification: NSNotification){
@@ -183,7 +207,13 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
             strLongitude = ""
             
         }
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         nearByRestAPI()
+        }
+        else{
+            alertInternet()
+        }
         //topCategoryAPI()
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -239,27 +269,40 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
            let timeAPI = UserDefaults.standard.string(forKey: Constant.RUN_ORDERSTATUS)
             if(timeAPI == "1")
             {
-               
-                ongoingOrderAPI()
+                orderCurrentStatusAPI()
             }
             }
            
            })
+      
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         timer.invalidate()
     }
     @objc func refresh(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         nearByRestAPI()
         cuisineAPI()
+        }
+        else
+        {
+            alertInternet()
+        }
       //  topCategoryAPI()
     }
     
     @objc func addressCall()
     {
-        screenType = 1
-        performSegue(withIdentifier: "address", sender: nil)
+        if(UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID) == "2")
+        {
+            alertUIGuestUser()
+        }
+        else{
+            screenType = 1
+                tabBarController?.selectedIndex = 1
+        }
     }
     
     @objc func searchCall()
@@ -277,7 +320,8 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
        
 
         if(collectionView == self.collectionView)
@@ -302,7 +346,7 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
                 
 //                if cell.tag == indexPath.row {
                     let urlYourURL = URL (string: self.arrOfCuisine[indexPath.row].cuisineImage )
-                    cell.imgCuisine.loadurl(url: urlYourURL!)
+//                    cell.imgCuisine.loadurl(url: urlYourURL!)
                     
             cell.imgCuisine.af_setImage(
                 withURL:  urlYourURL!,
@@ -333,15 +377,12 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
         {
         let lay = collectionViewLayout as! UICollectionViewFlowLayout
         let widthPerItem = collectionView.frame.width / 2 - lay.minimumInteritemSpacing
-        
             return CGSize(width:widthPerItem, height:30)
         }
         else{
             let lay = collectionViewLayout as! UICollectionViewFlowLayout
             let heightPerItem = collectionView.frame.height / 2 - lay.minimumInteritemSpacing
-            
             let widthPerItem = collectionView.frame.width / 2.2 - lay.minimumInteritemSpacing
-            
             return CGSize(width: widthPerItem
                           , height: heightPerItem)
         }
@@ -349,17 +390,29 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if(collectionView == self.collectionView){
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             selectedIndex = indexPath.row
 
         self.strTopName = arrOfTopCategory[indexPath.row].cName
         screenType = 4
         self.performSegue(withIdentifier: "top", sender: nil)
+            }
+            else{
+                alertInternet()
+            }
         }
         else{
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.strTopName = arrOfCuisine[indexPath.row].cuisine
             selectedIndex = indexPath.row
             screenType = 5
             self.performSegue(withIdentifier: "top", sender: nil)
+            }
+            else{
+                alertInternet()
+            }
         }
     }
     
@@ -415,10 +468,15 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
         
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         selectedIndex = indexPath.row
-        
         screenType = 0
         performSegue(withIdentifier: "menu", sender: nil)
+        }else
+        {
+            alertInternet()
+        }
     }
     
     
@@ -477,7 +535,7 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
             ["accesstoken" : Constant.APITOKEN,"src_lati": strLatitude , "src_long": strLongitude]
         print(param)
         AF.request(Constant.baseURL + Constant.nearByRestarantAPI , method: .post, parameters: param).validate().responseJSON { (response) in
-        debugPrint(response)
+     //   debugPrint(response)
 //            if(self.refreshControl != nil)
 //            {
 //                self.refreshControl.endRefreshing()
@@ -485,7 +543,7 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
             self.refreshControl.endRefreshing()
             switch response.result {
             case .success:
-                print("near by restor success")
+              //  print("near by restor success")
                 self.indicator.isHidden = true
                 if let json = response.data {
                     do{
@@ -528,7 +586,7 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
             ["accesstoken" : Constant.APITOKEN ]
         print(param)
         AF.request(Constant.baseURL + Constant.cuisineList , method: .post, parameters: param).validate().responseJSON { (response) in
-            debugPrint(response)
+          //  debugPrint(response)
             
             switch response.result {
             case .success:
@@ -578,30 +636,50 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
                 UserDefaults.standard.set("1", forKey: Constant.ONGOING_ORDERAPIHIT)
                 UserDefaults.standard.setValue("0", forKey: Constant.RUN_ORDERSTATUS)
                 self.viewTrackOrder.isHidden = false
-                self.strOrderId = "\(json["data"]["oid"])"
-                let orderStatus = "\(json["data"]["status"])"
+                self.strOrderId = "\(json["data"][0]["oid"])"
+                let OrderCount = "\(json["data"].count)"
+                self.txtOrderID.text = "Order Id : " + self.strOrderId
+                UserDefaults.standard.setValue("\(json["data"].count)", forKey: Constant.ORDER_COUNT)
+                if OrderCount == "2"
+                {
+                    self.strOrderId2 = "\(json["data"][1]["oid"])"
+                }
+                UserDefaults.standard.setValue( "\(json["data"]["oid"])", forKey: Constant.ORDER_ID)
+                let orderStatus = "\(json["data"][0]["status"])"
                 switch orderStatus {
                 case "1":
                     self.txtOrderStatus.text = "Waiting for confirmation"
                 case "5":
-                    if("\(json["data"]["inDriver"])" == "2")
+                    if("\(json["data"][0]["inDriver"])" == "2")
                     {
-                    self.txtOrderStatus.text = "Food is being prepared"
+                    self.txtOrderStatus.text = "Order is getting ready"
                     }
                     else{
                         self.txtOrderStatus.text = "Driver assigned"
                     }
                 case "7":
-                    self.txtOrderStatus.text = "Food is being prepared"
+                    self.txtOrderStatus.text = "Order is getting ready"
                 case "8":
                     self.txtOrderStatus.text = "Picked by driver"
                     
                 case "9":
                     self.txtOrderStatus.text = "Order is ready to collect"
-                    
+                case "10":
+                    self.screenType = 6
+                    self.performSegue(withIdentifier: "rating", sender: nil)
                 case "12":
                     self.txtOrderStatus.text = "Order is ready"
-                    
+                case "2":
+                   
+                    self.alertFailure(title: "Order rejected", Message: "Your order has been rejected. Please try again")
+                case "14" :
+                    if("\(json["data"][0]["order_type"])" == "0")
+                    {
+                    self.alertFailure(title: "Order not accepted", Message: "Your order is not accepted by restaurant. Order amount will be added in your wallet in few minutes. Explore the food from another restaurant")
+                    }
+                    else{
+                        self.alertFailure(title: "Order not accepted", Message: "Your order is not accepted by grocery store. Order amount will be added in your wallet in few minutes")
+                    }
                 default:
                     self.txtOrderStatus.text = "Wait for a while"
                 }
@@ -640,6 +718,14 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
             seconVC.searchTextFull = strTopName
             seconVC.strCuisineID = "\(arrOfCuisine[selectedIndex].id)"
         }
+        else if(screenType == 6)
+        {
+            let secondViewController = segue.destination as! OrderRatingController
+            secondViewController.strOrderId = strOrderId
+            secondViewController.starSelect = "0"
+            secondViewController.driverStar = "0"
+            secondViewController.screenType = "0"
+        }
         
     }
     
@@ -655,5 +741,105 @@ class DiscoveryController: UIViewController, UICollectionViewDelegate, UICollect
         }
     }
     
+    func orderCurrentStatusAPI()
+    {
+        let oid = UserDefaults.standard.string(forKey: Constant.ORDER_ID)!
+        let parameters = ["accesstoken" : Constant.APITOKEN, "oid" : oid]
+        print("parameters",parameters)
+        APIsManager.shared.requestService(withURL: Constant.orderCurrentStatusAPI, method: .post, param: parameters, viewController: self) { (json) in
+            print(json)
+            
+            if("\(json["code"])" == "200")
+            {
+                UserDefaults.standard.setValue("0", forKey: Constant.RUN_ORDERSTATUS)
+                let orderStatus = "\(json["data"]["status"])"
+                self.txtOrderID.text =  "Order Id : " + oid
+                switch orderStatus {
+                case "1":
+                    self.txtOrderStatus.text = "Waiting for confirmation"
+                case "5":
+                    if("\(json["data"]["inDriver"])" == "2")
+                    {
+                    self.txtOrderStatus.text = "Order is getting ready"
+                    }
+                    else{
+                        self.txtOrderStatus.text = "Driver assigned"
+                    }
+                case "7":
+                    self.txtOrderStatus.text = "Order is getting ready"
+                case "8":
+                    self.txtOrderStatus.text = "Picked by driver"
+                    
+                case "9":
+                    self.txtOrderStatus.text = "Order is ready to collect"
+                case "10":
+                    self.screenType = 6
+                    self.performSegue(withIdentifier: "rating", sender: nil)
+                case "12":
+                    self.txtOrderStatus.text = "Order is ready"
+                case "2":
+                   
+                    self.alertFailure(title: "Order rejected", Message: "Your order has been rejected. Please try again")
+                    self.viewTrackOrder.isHidden = true
+                case "14" :
+                    if("\(json["data"]["order_type"])" == "0")
+                    {
+                    self.alertFailure(title: "Order not accepted", Message: "Your order is not accepted by restaurant. Order amount will be added in your wallet in few minutes. Explore the food from another restaurant")
+                    }
+                    else{
+                        self.alertFailure(title: "Order not accepted", Message: "Your order is not accepted by grocery store. Order amount will be added in your wallet in few minutes")
+                    }
+                    self.viewTrackOrder.isHidden = true
+                default:
+                    self.txtOrderStatus.text = "Wait for a while"
+                }
+            }
+            else
+            {
+                
+            }
+            
+        }
+    }
+    
+    func alertTwoOrder() -> Void {
+        let alert = UIAlertController(title: "Multiple Order", message: "Which order Id status you want to track?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Order Id " + strOrderId, style: .default, handler: { action in
+                                        switch action.style{
+                                        case .default:
+                                            print("default")
+                                            self.screenType = 2
+                                            
+                                            self.performSegue(withIdentifier: "track", sender: nil)
+                                        case .cancel:
+                                            print("cancel")
+                                            
+                                        case .destructive:
+                                            print("destructive")
+                                            
+                                        @unknown default:
+                                            break;
+                                        }}))
+        alert.addAction(UIAlertAction(title: "Order Id " + strOrderId2, style: .default, handler: { action in
+                                        switch action.style{
+                                        case .default:
+                                            print("default")
+                                            self.screenType = 2
+                                            self.strOrderId = self.strOrderId2
+                                            self.performSegue(withIdentifier: "track", sender: nil)
+                                        case .cancel:
+                                            print("cancel")
+                                            
+                                        case .destructive:
+                                            print("destructive")
+                                            
+                                        @unknown default:
+                                            break;
+                                        }}))
+        //   alert.setBackgroundColor(color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0))
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
 }
 

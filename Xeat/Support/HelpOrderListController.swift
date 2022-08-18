@@ -77,14 +77,16 @@ class HelpOrderListController: UIViewController, UITableViewDelegate,UITableView
         case "2":
             cell2.helpStatus.setTitle(LocalizationSystem.sharedInstance.localizedStringForKey(key: "Status : Closed", comment: ""), for: .normal)
             cell2.helpStatus.setTitleColor(#colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), for: .normal)
+            cell2.isUserInteractionEnabled = false
         case "1":
             cell2.helpStatus.setTitle(LocalizationSystem.sharedInstance.localizedStringForKey(key: "Status : Pending", comment: ""), for: .normal)
             cell2.helpStatus.setTitleColor(#colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1), for: .normal)
 
-
+            cell2.isUserInteractionEnabled = true
         default:
             cell2.helpStatus.setTitle(LocalizationSystem.sharedInstance.localizedStringForKey(key: "Refund successful", comment: ""), for: .normal)
             cell2.helpStatus.setTitleColor(#colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), for: .normal)
+            cell2.isUserInteractionEnabled = false
         }
 //
         
@@ -96,8 +98,13 @@ class HelpOrderListController: UIViewController, UITableViewDelegate,UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
      
         selectedPosition = indexPath.row
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
             performSegue(withIdentifier: "orderchat", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
        
        
     }

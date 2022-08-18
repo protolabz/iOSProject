@@ -226,6 +226,8 @@ class LoginController: UIViewController, CountryPickerViewDelegate, CountryPicke
                 UserDefaults.standard.set("\(json["data"]["image"])",forKey: Constant.PROFILE_PICTURE)
 
                 UserDefaults.standard.set("1", forKey: Constant.IS_LOGGEDIN)
+                UserDefaults.standard.set("0", forKey: Constant.SELECTION_MODE)
+
                 UserDefaults.standard.set(email, forKey: Constant.CONTACT_NO)
                 UserDefaults.standard.set("\(json["data"]["id"])", forKey: Constant.USER_UNIQUE_ID)
             self.getPrimaryAddress(strUserId: "\(json["data"]["id"])")

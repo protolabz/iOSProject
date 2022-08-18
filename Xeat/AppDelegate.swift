@@ -22,9 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.enable = true
         GMSPlacesClient.provideAPIKey("AIzaSyBp4yl2RdiAYVfXoSl0om_7pw-vrHwZINA")
         GMSServices.provideAPIKey("AIzaSyBp4yl2RdiAYVfXoSl0om_7pw-vrHwZINA")
-        SQIPInAppPaymentsSDK.squareApplicationID = "sq0idp-Jv1irANYvubAKUnFNpUSQg"
+//        SQIPInAppPaymentsSDK.squareApplicationID = "sq0idp-Jv1irANYvubAKUnFNpUSQg"
 
-//   SQIPInAppPaymentsSDK.squareApplicationID = "sandbox-sq0idb-2xx7Fx19x8nY3zSLdffPOg"
+   SQIPInAppPaymentsSDK.squareApplicationID = "sandbox-sq0idb-2xx7Fx19x8nY3zSLdffPOg"
         UIApplication.shared.applicationIconBadgeNumber = 0
 
         // Override point for customization after application launch.

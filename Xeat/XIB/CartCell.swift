@@ -24,6 +24,7 @@ class CartCell: UITableViewCell {
     @IBOutlet weak var viewUi: UIView!
     override func awakeFromNib() {
         super.awakeFromNib()
+        viewUi.isUserInteractionEnabled = true
         // Initialization code
     }
 
@@ -34,7 +35,7 @@ class CartCell: UITableViewCell {
         viewUi.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         viewUi.layer.cornerRadius = 10
        
-
+     
         // Configure the view for the selected state
         
         viewPlusMinus.layer.borderWidth = 0.1

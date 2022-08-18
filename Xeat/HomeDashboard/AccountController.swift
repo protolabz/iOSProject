@@ -14,16 +14,20 @@ import SwiftyJSON
 
 class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGestureRecognizerDelegate{
     
+    @IBOutlet weak var viewSwitchMode: UIView!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
     @IBOutlet weak var vLogout: UIView!
     @IBOutlet weak var vChangePassword: UIView!
    
+    @IBOutlet weak var txtCurrentMode: UILabel!
     @IBOutlet weak var vShare: UIView!
     
     @IBOutlet weak var vProfile: UIView!
     @IBOutlet weak var vYourOrder: UIView!
     @IBOutlet weak var vTrackOrder: UIView!
     
+    @IBOutlet weak var txtSwitchModeLine: UILabel!
+    @IBOutlet weak var txtSwitchMode: UILabel!
     @IBOutlet weak var vWallet: UIView!
     @IBOutlet weak var vSuppourt: UIView!
     
@@ -35,6 +39,8 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
     @IBOutlet weak var txtEmailAddress: UILabel!
     @IBOutlet weak var txtName: UILabel!
     @IBOutlet weak var imgProfile: UIImageView!
+    
+    var strMode = "-1"
     
 //    override var preferredStatusBarStyle: UIStatusBarStyle {
 //        return .darkContent
@@ -57,6 +63,20 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
             imgProfile.loadurl(url: urlYourURL!)
             //            DLImageLoader.shared.image(from: urlYourURL, into: imgProfile)
         }
+        if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+            {
+
+            self.txtCurrentMode.text = "Current mode : Grocery"
+            strMode = "1"
+            txtSwitchModeLine.text = "Switch from Grocery to Food ordering"
+        }
+        else{
+            self.txtCurrentMode.text = "Current mode : Food ordering"
+            txtSwitchModeLine.text = "Switch from Food ordering to Grocery"
+
+            strMode = "0"
+        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -71,6 +91,19 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         indicator.style = UIActivityIndicatorView.Style.medium
         indicator.color = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
         
+        if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+            {
+
+            self.txtCurrentMode.text = "Current mode : Grocery"
+            strMode = "1"
+            txtSwitchModeLine.text = "Switch from Grocery to Food ordering"
+        }
+        else{
+            self.txtCurrentMode.text = "Current mode : Food ordering"
+            txtSwitchModeLine.text = "Switch from Food ordering to Grocery"
+
+            strMode = "0"
+        }
         
         vChangePassword.isUserInteractionEnabled = true
         vChangePassword.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.imageTap)))
@@ -102,6 +135,13 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         
         vShare.isUserInteractionEnabled = true
         vShare.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.share)))
+        
+        viewSwitchMode.isUserInteractionEnabled = true
+        viewSwitchMode.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileCall2)))
+
+        txtCurrentMode.isUserInteractionEnabled = true
+        txtCurrentMode.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileCall2)))
+
         // Do any additional setup after loading the view.
     }
     @objc func imageTap() {
@@ -125,14 +165,20 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
     }
     
     @objc func logoutCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         alertUILogged()
+        }
+        else{
+            alertInternet()
+        }
     }
     
    
-    
-    
+
     @objc func walletCall() {
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID) == "2")
         {
             alertUIGuestUser()
@@ -140,15 +186,24 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         else{
        performSegue(withIdentifier: "wallet", sender: nil)
         }
+        }
+        else{
+            alertInternet()
+        }
     }
     
     @objc func yourOderCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID) == "2")
         {
             alertUIGuestUser()
         }
         else{
             performSegue(withIdentifier: "orderhistory", sender: nil)
+        }
+        }else{
+            alertInternet()
         }
       
     }
@@ -165,6 +220,8 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
     }
     
     @objc func BookOderCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(UserDefaults.standard.string(forKey: Constant.API_TOKEN) == "0")
         {
             alertUIGuestUser()
@@ -172,10 +229,17 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         else{
            performSegue(withIdentifier: "promotion", sender: nil)
         }
+        }
+        else{
+            alertInternet()
+        }
+            
      
     }
     
     @objc func supportCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID) == "2")
         {
             alertUIGuestUser()
@@ -183,16 +247,25 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         else{
             performSegue(withIdentifier: "support", sender: nil)
         }
+        }
+        else{
+            alertInternet()
+        }
      
     }
     
     @objc func profileCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID) == "2")
         {
             alertUIGuestUser()
         }
         else{
             performSegue(withIdentifier: "update", sender: nil)
+        }
+        }else{
+            alertInternet()
         }
       
     }
@@ -202,6 +275,8 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
     
     func alertUILogged() -> Void
     {
+        
+        
         let refreshAlert = UIAlertController(title: "Logout", message: "Are you sure you want to logout from the app? ", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
@@ -210,11 +285,55 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
-           self.logoutApi()
-            UserDefaults.standard.set("0", forKey: Constant.IS_LOGGEDIN)
-            let domain = Bundle.main.bundleIdentifier!
-            UserDefaults.standard.removePersistentDomain(forName: domain)
-            UserDefaults.standard.synchronize()
+            if(self.currentReachabilityStatus != .notReachable)
+            {
+            self.logoutApi()
+            }
+            else
+            {
+                self.alertInternet()
+            }
+            
+        }))
+        
+        present(refreshAlert, animated: true, completion: nil)
+    }
+    
+    @objc func profileCall2()
+    {
+        var str1 =   ""
+        var str2 = ""
+        var strNewMode = ""
+        if strMode == "1"
+        {
+        str1 = "Grocery"
+        str2 = "Food ordering"
+            strNewMode = "0"
+        }
+        else
+        {
+            str1 = "Grocery"
+            str2 = "Food ordering"
+            strNewMode = "1"
+        }
+        let refreshAlert = UIAlertController(title: "Switch mode", message: "Are you sure you want to switch your app from \(str1) to \(str2)?", preferredStyle: UIAlertController.Style.alert)
+        
+        refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        
+        refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
+
+            UserDefaults.standard.set(strNewMode, forKey: Constant.SELECTION_MODE)
+            if(self.currentReachabilityStatus != .notReachable)
+            {
+            self.deleteCartApi()
+            }
+            else
+            {
+                self.alertInternet()
+            }
             self.navigationController?.popToRootViewController(animated: true)
             
             
@@ -232,6 +351,36 @@ class AccountController: UIViewController , SFSafariViewControllerDelegate, UIGe
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.logoutApi, method: .post, param: parameters, viewController: self) { (json) in
             print(json)
+            UserDefaults.standard.setValue("0", forKey: Constant.IS_LOGGEDIN)
+            UserDefaults.standard.set(nil, forKey: Constant.USERADDRESS)
+            UserDefaults.standard.set(nil, forKey: Constant.USERLATITUDE)
+            UserDefaults.standard.set(nil, forKey: Constant.USERADDRESSID)
+            UserDefaults.standard.set(nil, forKey: Constant.USERLONGITUDE)
+            let domain = Bundle.main.bundleIdentifier!
+            UserDefaults.standard.removePersistentDomain(forName: domain)
+            UserDefaults.standard.synchronize()
+            self.navigationController?.popToRootViewController(animated: true)
+
+        }
+    }
+    
+    func deleteCartApi()
+    {
+        let strUserId = UserDefaults.standard.string(forKey: Constant.CART_ID)!
+        let parameters = ["accesstoken" : Constant.APITOKEN, "cart_id" : strUserId]
+
+        print("parameters",parameters)
+        APIsManager.shared.requestService(withURL: Constant.cartDeleteModeChange, method: .post, param: parameters, viewController: self) { (json) in
+            print(json)
+            if("\(json["status"])" == "200")
+            {
+                if let tabItems = self.tabBarController!.tabBar.items {
+                    // In this case we want to modify the badge number of the third tab:
+                    let tabItem = tabItems[2]
+                    tabItem.badgeValue = nil
+                    
+                }
+            }
 
         }
     }

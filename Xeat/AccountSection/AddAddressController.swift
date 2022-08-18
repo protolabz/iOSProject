@@ -44,8 +44,14 @@ class AddAddressController: UIViewController, GMSAutocompleteViewControllerDeleg
     @IBOutlet weak var edAddress: UITextView!
     
     @IBAction func btnSave(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
 //        autocompleteClicked()
      userInputValue()
+        }
+        else{
+            alertInternet()
+        }
     }
     var locationManager = CLLocationManager()
     
@@ -233,7 +239,13 @@ class AddAddressController: UIViewController, GMSAutocompleteViewControllerDeleg
         marker2.icon = #imageLiteral(resourceName: "icons8-location-96.png")
         if(mapLoaded == 1)
         {
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             reverseGeocoding(lat: position.target.latitude, longg:  position.target.longitude)
+            }
+            else{
+                alertInternet()
+            }
         }
     }
     private func mapView(mapView: GMSMapView!, didTapMarker marker: GMSMarker!) -> Bool {

@@ -22,9 +22,15 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
     
     @IBOutlet weak var txtRestHeading: UILabel!
     @IBAction func btnViewCart(_ sender: Any) {
-        print("tergvfwsxcdevbfrntmyui")
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         screenFlag = 0
+    
         performSegue(withIdentifier: "cart2", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
     }
     var strSelectedSize = "R"
     var searchApplied = 0
@@ -92,9 +98,11 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         super.viewDidLoad()
         
         initViews()
-        restaurantDetail()
+        
+        //restaurantDetail()
         if(currentReachabilityStatus != .notReachable)
         {
+            restaurantDetail()
             menuList()
             categoryAPI()
         }
@@ -108,7 +116,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
     
     func initViews()
     {
-        
+         
         viewPlusMinus.isHidden = true
         self.imgSearch.isHidden = true
         txtHalal.isHidden = true
@@ -135,16 +143,24 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 5
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+//        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        collectionView.setCollectionViewLayout(layout, animated: true)
+
         self.collectionView.collectionViewLayout = layout
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(UINib(nibName: "TopCategoryCell", bundle: nil), forCellWithReuseIdentifier: "TopCategoryCell")
+        collectionView.register(UINib(nibName: "RestCategoryCell", bundle: nil), forCellWithReuseIdentifier: "RestCategoryCell")
         collectionView.clipsToBounds = true
+        
+
+      //  collectionFlowLayout.itemSize = CGSize(width: 145, height: 145)
+    
+        
+        
         viewUi.layer.borderWidth = 0.5
         viewUi.layer.masksToBounds = false
         viewUi.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        viewUi.layer.cornerRadius = 10
+        viewUi.layer.cornerRadius = 20
         
         viewInnerPlusMinus.layer.borderWidth = 0.5
         viewInnerPlusMinus.layer.masksToBounds = false
@@ -195,6 +211,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         edInstruction.layer.cornerRadius = 5
         edInstruction.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         edInstruction.layer.borderWidth = 0.3
+        edInstruction.isScrollEnabled = false
         
         imgCall.isUserInteractionEnabled = true
         imgCall.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.makeCall)))
@@ -210,9 +227,17 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         
         imgSearch.isUserInteractionEnabled = true
         imgSearch.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.searchMenu)))
-        
     }
-    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 1.0, left: 1.0, bottom: 1.0, right: 1.0)//here your custom value for spacing
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let lay = collectionViewLayout as! UICollectionViewFlowLayout
+        let widthPerItem = collectionView.frame.width / 2.7 - lay.minimumInteritemSpacing
+
+            return CGSize(width:widthPerItem, height:collectionView.frame.height-10 )
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
@@ -255,8 +280,16 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
     
     @objc func searchMenu()
     {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         self.screenFlag = 2
-        performSegue(withIdentifier: "searchmenu", sender: nil)    }
+        performSegue(withIdentifier: "searchmenu", sender: nil)
+        }
+        else
+        {
+            alertInternet()
+        }
+        }
     
     @objc func makeCall()
     {
@@ -300,7 +333,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopCategoryCell", for: indexPath) as! TopCategoryCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RestCategoryCell", for: indexPath) as! RestCategoryCell
         cell.txtName.text = arrOfTopCategory[indexPath.row].cName
         //
         //        let urlYourURL = URL (string:"\(arrOfTopCategory[indexPath.row].image)" )
@@ -309,9 +342,16 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         screenFlag = 5
         strSelectedIndex = indexPath.row
         self.performSegue(withIdentifier: "categorymenu", sender: nil)
+        }
+        else
+        {
+            alertInternet()
+        }
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -331,8 +371,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         
         cell2.txtPrice.text = "£"  +  "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
         cell2.txtNumber.text = "0"
-        
-        
+    
         
         if(arrOfMenu[indexPath.row]["is_popular_item"] == "1")
         {
@@ -599,7 +638,14 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
             let commissionPrice =   "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
             // updateCartProductAPI(position: sender.tag, count: "1")
             viewPlusMinus.isHidden = true
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             addDeleteToCartAPI(position : selectedPosition, operation : "2", commissionPrice: commissionPrice ,count: strText!, actualPrice : actualPrice, strInstruction:  strInstruction)
+            }
+            else
+            {
+                alertInternet()
+            }
             
         }
         else if((instructions != strInstruction) && (strText != "0") )
@@ -611,7 +657,13 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
             let commissionPrice =   "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
             // updateCartProductAPI(position: sender.tag, count: "1")
             viewPlusMinus.isHidden = true
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             addDeleteToCartAPI(position : selectedPosition, operation : "2", commissionPrice: commissionPrice ,count: strText!, actualPrice : actualPrice, strInstruction:  strInstruction)
+            }
+            else{
+                alertInternet()
+            }
         }
         else{
             
@@ -625,11 +677,17 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
     
     func editTap()
     {
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         strSelectedIndex = selectedPosition
         
         screenFlag = 1
         performSegue(withIdentifier: "msize", sender: nil)
+        }
+        else
+        {
+            alertInternet()
+        }
         //        }
         
     }
@@ -647,12 +705,14 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
             let name = "\(self.arrOfMenu[strSelectedIndex]["name"])"
             let sizeAvailable = "\(self.arrOfMenu[selectedPosition]["is_size_available"])"
             
+            
             secondViewController.strMenuId = strMenuId
             secondViewController.strActualPrice = actualPrice
             secondViewController.strCommissionPrice = commissionPrice
             secondViewController.strCommision = strCommision
             secondViewController.strItemName = name
             secondViewController.isSizeAvailable = Int(sizeAvailable)!
+            secondViewController.strItemCommission = Double(strCommision)!
             screenFlag = 0
         }
         else if(screenFlag == 2){
@@ -941,7 +1001,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
                 self.viewCartTotal.isHidden = false
                 let itemPrice = Double("\(json["total_Item_amount"])")
                 //    cell2.txtPrice.text = "£"  + "\(self.arrOfMenu[indexPath.row]["f_price"])"
-                
+                UserDefaults.standard.setValue( "\(json["data"][0]["cart_id"])", forKey: Constant.CART_ID)
                 self.txtCartTotal.text = "\(json["cart_items"])" + " items" + " | " + "£" + "\(String(format: "%.2f", itemPrice!.rounded(digits: 2)))"
                 for i in 0..<json["data"].count
                 {
@@ -988,7 +1048,7 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
                 self.viewCartTotal.isHidden = false
                 let itemPrice = Double("\(json["total_Item_amount"])")
                 //    cell2.txtPrice.text = "£"  + "\(self.arrOfMenu[indexPath.row]["f_price"])"
-                
+                UserDefaults.standard.setValue( "\(json["data"][0]["cart_id"])", forKey: Constant.CART_ID)
                 self.txtCartTotal.text = "\(json["cart_items"])" + " items" + " | " + "£" + "\(String(format: "%.2f", itemPrice!.rounded(digits: 2)))"
                 //                if()
                 for i in 0..<json["data"].count
@@ -1099,7 +1159,14 @@ class RestaurantController: UIViewController,  UITableViewDelegate,UITableViewDa
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.removeCartDataAPI()
+            }
+            else
+            {
+                self.alertInternet()
+            }
             
         }))
         

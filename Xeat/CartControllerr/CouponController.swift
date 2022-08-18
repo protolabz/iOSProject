@@ -107,11 +107,13 @@ class CouponController: UIViewController , UITableViewDelegate,UITableViewDataSo
     
     func couponDetailAPI()
     {
-        
+     
         indicator.isHidden = false
         indicator.startAnimating()
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "r_id" : strRestId]
+        let strMode = UserDefaults.standard.string(forKey: Constant.SELECTION_MODE)!
+
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "r_id" : strRestId, "type" : strMode]
         print(parameters)
         AF.request(Constant.baseURL + Constant.couponListAPI, method: .post, parameters: parameters).validate().responseJSON { (response) in
             debugPrint(response)
@@ -119,7 +121,6 @@ class CouponController: UIViewController , UITableViewDelegate,UITableViewDataSo
             if(status == 401)
             {
                 self.indicator.isHidden = true
-                
                 
             }
             else{
@@ -181,8 +182,9 @@ class CouponController: UIViewController , UITableViewDelegate,UITableViewDataSo
     
     func updateCouponAPI(strCouponId : String)
     {
+        let strMode = UserDefaults.standard.string(forKey: Constant.SELECTION_MODE)!
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "coupon_applied" : "1","coupon_id" : strCouponId ]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "coupon_applied" : "1","coupon_id" : strCouponId, "type" : strMode ]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -194,7 +196,7 @@ class CouponController: UIViewController , UITableViewDelegate,UITableViewDataSo
             }
             else
             {
-                self.alertSucces(title: "Coupon applied", Message: "Coupon applied on your cart. Enjoy the discount offered by restaurant")
+                self.alertSucces(title: "Coupon applied", Message: "Coupon applied on your cart. Enjoy the discount on your order")
             }
             
         }

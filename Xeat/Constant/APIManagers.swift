@@ -68,6 +68,8 @@ class APIsManager: NSObject {
                 viewController.hideProgressLoader()
                 print(response.error!.localizedDescription)
                 break
+                
+            
             }
         }
         }

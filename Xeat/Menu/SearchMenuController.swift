@@ -46,7 +46,7 @@ class SearchMenuController: UIViewController,  UITableViewDelegate,UITableViewDa
     var arrOfAddToCartItem : [JSON] = []
     var strCellItemCount = ""
     var previousCount = 0
-var strRestId = ""
+    var strRestId = ""
      var strActualPrice = ""
     @IBAction func imgBack(_ sender: Any) {
         
@@ -55,7 +55,13 @@ var strRestId = ""
     
     override func viewWillAppear(_ animated: Bool) {
        // searchBar.text = ""
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         fetchCartDetailSearch()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     
@@ -122,9 +128,14 @@ var strRestId = ""
             
         }
         else{
-            print("else works")
-            print(searchId)
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             menuSearch()
+            }
+            else
+            {
+                alertInternet()
+            }
         }
       
         
@@ -159,7 +170,14 @@ var strRestId = ""
         }
         else
         {
+            if(self.currentReachabilityStatus != .notReachable)
+            {
         menuSearchList(strSearch : searchText)
+            }
+            else
+            {
+                alertInternet()
+            }
         }
     }
     
@@ -448,7 +466,13 @@ var strRestId = ""
             let commissionPrice =   "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
             // updateCartProductAPI(position: sender.tag, count: "1")
             viewPlusMinus.isHidden = true
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             addDeleteToCartAPI(position : selectedPosition, operation : "2", commissionPrice: commissionPrice ,count: strText!, actualPrice : actualPrice, strInstruction:  strInstruction)
+            }
+            else{
+                alertInternet()
+            }
             
         }
         else if((instructions != strInstruction) && (strText != "0") )
@@ -460,7 +484,13 @@ var strRestId = ""
             let commissionPrice =   "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
             // updateCartProductAPI(position: sender.tag, count: "1")
             viewPlusMinus.isHidden = true
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             addDeleteToCartAPI(position : selectedPosition, operation : "2", commissionPrice: commissionPrice ,count: strText!, actualPrice : actualPrice, strInstruction:  strInstruction)
+            }
+            else{
+                alertInternet()
+            }
         }
         else{
            
@@ -501,8 +531,14 @@ var strRestId = ""
 //           }
 //           else{
               // screenFlag = 1
+        if(self.currentReachabilityStatus != .notReachable)
+        {
                performSegue(withIdentifier: "addon", sender: nil)
-//           }
+           }
+        else
+        {
+            alertInternet()
+        }
            
        }
 //    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -532,6 +568,7 @@ var strRestId = ""
         secondViewController.strCommision = strCommision
         secondViewController.strItemName = name
         secondViewController.isSizeAvailable = Int(sizeAvailable)!
+        secondViewController.strItemCommission = Double(strCommision)!
        
          
     }

@@ -117,8 +117,13 @@ class TopCategoryController: UIViewController, UITableViewDelegate,UITableViewDa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndex = indexPath.row
         
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         performSegue(withIdentifier: "menu", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

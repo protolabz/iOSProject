@@ -21,6 +21,7 @@ class OTPController: UIViewController , UITextFieldDelegate{
     var strDeviceToken = ""
     var strDailCode = ""
     
+    @IBOutlet weak var verifyLine: UILabel!
     @IBOutlet var btnResend: UIButton!
     @IBOutlet var indicator: UIActivityIndicatorView!
     @IBOutlet var txtEmail: UILabel!
@@ -42,9 +43,9 @@ class OTPController: UIViewController , UITextFieldDelegate{
         indicator.isHidden = true
         indicator.style = UIActivityIndicatorView.Style.large
         indicator.color = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-        txtEmail.text = intentName
+        txtEmail.text = strDailCode + strPhone
         self.setupToHideKeyboardOnTapOnView()
-        
+        verifyLine.text = "Verify your one time password"
         //  self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         btnVerify.layer.cornerRadius=10
         btnVerify.clipsToBounds=true
@@ -271,6 +272,7 @@ class OTPController: UIViewController , UITextFieldDelegate{
                 UserDefaults.standard.set("",forKey: Constant.PROFILE_PICTURE)
 
                 UserDefaults.standard.set("1", forKey: Constant.IS_LOGGEDIN)
+                UserDefaults.standard.set("0", forKey: Constant.SELECTION_MODE)
                 UserDefaults.standard.set(self.strDailCode +  self.strPhone, forKey: Constant.CONTACT_NO)
                 UserDefaults.standard.set("\(json["data"]["id"])", forKey: Constant.USER_UNIQUE_ID)
 
@@ -307,7 +309,7 @@ class OTPController: UIViewController , UITextFieldDelegate{
                 self.alertFailure(title: "Invalid", Message: "\(json["message"])")
                 
             }
-            
+
             
         }
         
@@ -321,7 +323,7 @@ class OTPController: UIViewController , UITextFieldDelegate{
             print(json)
             if("\(json["code"])" == "200")
             {
-                _ = self.navigationController?.popToRootViewController(animated: true)
+                self.alertRootRedirection(title: "Password reset", Message: "Password reset successfully, now you may login to access your account")
                
             }
             else

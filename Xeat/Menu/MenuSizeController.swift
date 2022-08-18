@@ -42,10 +42,10 @@ class MenuSizeController: UIViewController ,  UICollectionViewDelegate, UICollec
         if(Set(arrOfRequired).isSubset(of: Set(arrOfSelectedSection)))
         {
       //  btnAdd.isEnabled = false
-                print(arrOfRadioData)
-                print(arrOfsectionRadio)
-               
-        
+//                print(arrOfRadioData)
+//                print(arrOfsectionRadio)
+//
+//
         let jsonString2 = convertIntoJSONString(arrayObject: arrOfRadioData)
             for i in 0..<arrOfRadioData.count
         {
@@ -65,8 +65,13 @@ class MenuSizeController: UIViewController ,  UICollectionViewDelegate, UICollec
             {
                 isAddOnSelected = 0
             }
-           
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             addDeleteToCartAPI(str : ggg)
+            }
+            else{
+                alertInternet()
+            }
         //
         }
         else{
@@ -91,6 +96,7 @@ var strInstrctions = ""
     var strCommision = ""
     var strItemName = ""
     var strActualPrice = ""
+    var strItemCommission = 0.0
     
     var extraAddonSize = 0
     
@@ -146,7 +152,13 @@ var strInstrctions = ""
         btnAdd.layer.masksToBounds = true
         btnAdd.layer.cornerRadius = 5
         
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         aaddonNewAPI()
+        }
+        else{
+            alertInternet()
+        }
         
         
     }
@@ -286,24 +298,25 @@ var strInstrctions = ""
                 cell2.txtNo.text = "\(indexPath.row + 1)"
                 
                 cell2.txtItemName.text = arrOfListing[indexPath.section][indexPath.row].name
-                let price =
-                    Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")?.rounded(digits: 2)
+                    let deliveryCharge = (Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")!/100) * Double(strItemCommission)
+                    let newPrice = deliveryCharge + (Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")!)
+                    let price =  "\(String(format: "%.2f", newPrice.rounded(digits: 2)))"
+//                let price =
+//                    Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")?.rounded(digits: 2)
                 cell2.txtPrice.text =
-                    "£" +  "\(price!)"
+                    "£" +  "\(price)"
 
                 cell2.btnSelect.tag = (indexPath.section*100)+indexPath.row
                cell2.btnSelect.addTarget(self, action: #selector(addToCategory(_:)), for: .touchUpInside)
                 if(arrOfMainSelectedId2.contains(indexPath))
                 {
-                   
-                 
                     cell2.btnSelect.setBackgroundImage(UIImage(systemName: "checkmark.square"), for: .normal)
                     cell2.btnSelect.tintColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
                     if !arrOfSelectedID2.contains(where: { $0 == "\(arrOfListing[indexPath.section][indexPath.row].id)"}) {
                         arrOfSelectedID2.append("\(arrOfListing[indexPath.section][indexPath.row].id)")
 
                        
-                        arrOfAddOnData2.append(["id" : "\(arrOfListing[indexPath.section][indexPath.row].id)", "price" : "\(price!)", "name" :  arrOfListing[indexPath.section][indexPath.row].name
+                        arrOfAddOnData2.append(["id" : "\(arrOfListing[indexPath.section][indexPath.row].id)", "price" : "\(price)", "name" :  arrOfListing[indexPath.section][indexPath.row].name
                         ])
 
                     }
@@ -327,10 +340,13 @@ var strInstrctions = ""
                 cell2.txtNo.text = "\(indexPath.row + 1)"
                 
                 cell2.txtItemName.text = arrOfListing[indexPath.section][indexPath.row].name
-                let price =
-                    Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")?.rounded(digits: 2)
+                let deliveryCharge = (Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")!/100) * Double(strItemCommission)
+                let newPrice = deliveryCharge + (Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")!)
+                let price =   "\(String(format: "%.2f", newPrice.rounded(digits: 2)))"
+//                let price =
+//                 Double("\(arrOfListing[indexPath.section][indexPath.row].variantPrice)")?.rounded(digits: 2)
                 cell2.txtPrice.text =
-                    "£" +  "\(price!)"
+                    "£" +  "\(price)"
                 
                 cell2.btnSelect.tag = (arrOfListing[indexPath.section][indexPath.row]).id
                 cell2.btnSelect.tag = (indexPath.section*100)+indexPath.row
@@ -472,15 +488,19 @@ var strInstrctions = ""
 //
 //                        for j in 0..<json["menu_addon_with_sizes"][i]["sizes"].count
 //                        {
-//                            self.arrOfJsonAddon.append(self.arrOfAddOn[i])
-//                            print("arrOfJsonAddon")
-//                            print(self.arrOfJsonAddon)
+//                            self.arrOfAddOn.append("\(json["menu_addon_with_sizes"][i]["name"])" + "**"  +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_size"])" + "**" +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_price"])")
 //                        }
-//                        self.isAddOnExist = 1
-//                    }
+                        self.btnAdd.isEnabled = true
+                    }
+//
                     self.selectedSizeForAddOn = "\(json["menu_sizes"][0]["menu_size"])"
-                   
+                    if(self.currentReachabilityStatus != .notReachable)
+                    {
                     self.addOnDataAPI(strSize:  self.selectedSizeForAddOn)
+                    }
+                    else{
+                        self.alertInternet()
+                    }
                 }
                 else{
                   
@@ -502,18 +522,17 @@ var strInstrctions = ""
                             //  self.btnAdd.isEnabled = false
                         }
                         
-//                        for j in 0..<json["menu_addon_with_sizes"][i]["sizes"].count
-//                        {
-//                            self.arrOfAddOn.append("\(json["menu_addon_with_sizes"][i]["name"])" + "**"  +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_size"])" + "**" +  "\(json["menu_addon_with_sizes"][i]["sizes"][j]["item_price"])")
-//                            self.isAddOnExist = 1
-//                        }
-                    }
-                    
-//                    self.arrOfJsonAddon = self.arrOfAddOn
-                  
-//                    print(self.arrOfJsonAddon)
+                  }
+                 
                     self.tableView.reloadData()
+                    if(self.currentReachabilityStatus != .notReachable)
+                    {
                     self.addOnDataAPI(strSize:  "R")
+                    }
+                    else
+                    {
+                        self.alertInternet()
+                    }
                     self.btnAdd.isEnabled = true
                 }
             }
@@ -523,7 +542,6 @@ var strInstrctions = ""
     
     func addOnDataAPI(strSize : String)
     {
-        
        
         let param =
             ["accesstoken" : Constant.APITOKEN, "menu_id" : strMenuId, "size" : strSize ]
@@ -635,7 +653,13 @@ var strInstrctions = ""
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.removeCartDataAPI2()
+            }
+            else{
+                self.alertInternet()
+            }
             
         }))
         

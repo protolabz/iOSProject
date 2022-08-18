@@ -11,10 +11,17 @@ import Alamofire
 import SwiftyJSON
 import IQKeyboardManagerSwift
 
-class OrderChatController: UIViewController, UITableViewDelegate,UITableViewDataSource , UIImagePickerControllerDelegate, UINavigationControllerDelegate, SFSafariViewControllerDelegate{
+class OrderChatController: UIViewController, UITableViewDelegate,UITableViewDataSource ,UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, SFSafariViewControllerDelegate{
     
     @IBAction func btnReferesh(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         self.orderChatAPI()
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     @IBOutlet weak var indicator: UIActivityIndicatorView!
     var orderID = ""
@@ -54,24 +61,24 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    @objc func keyboard(notification:Notification) {
-        guard let keyboardReact = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else{
-            return
-        }
-        
-        if notification.name == UIResponder.keyboardWillShowNotification ||  notification.name == UIResponder.keyboardWillChangeFrameNotification {
-            self.view.frame.origin.y = -keyboardReact.height
-        }else{
-            self.view.frame.origin.y = 0
-        }
-        
-    }
+//    @objc func keyboard(notification:Notification) {
+//        guard let keyboardReact = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else{
+//            return
+//        }
+//
+//        if notification.name == UIResponder.keyboardWillShowNotification ||  notification.name == UIResponder.keyboardWillChangeFrameNotification {
+//            self.view.frame.origin.y = -keyboardReact.height
+//        }else{
+//            self.view.frame.origin.y = 0
+//        }
+//
+//    }
     override func viewDidLoad() {
         super.viewDidLoad()
         //IQKeyboardManager.shared.enable = true
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name:UIResponder.keyboardWillChangeFrameNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboard(notification:)), name:UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
         
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
@@ -86,7 +93,7 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
         
         let nib2 = UINib(nibName: "ChatImageCell", bundle: nil)
         tableView.register(nib2, forCellReuseIdentifier: "ChatImageCell")
-        
+        edMessag.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
         self.tableView.separatorStyle = .none
@@ -199,7 +206,7 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
             let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
             let photoURL          = NSURL(fileURLWithPath: documentDirectory)
             let localPath         = photoURL.appendingPathComponent(imageName!)
-            let image             = info[UIImagePickerController.InfoKey.originalImage]as! UIImage
+            let image             = info[UIImagePickerController.InfoKey.editedImage]as! UIImage
             
             let data              = image.jpeg(.medium)
             
@@ -244,8 +251,13 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
             // let photoURL = URL.init(fileURLWithPath: localPath!)//NSURL(fileURLWithPath: localPath!)
             let photoURL = localPath?.absoluteURL
             filePath = photoURL
-            
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             uploadDocument()
+            }
+            else{
+                alertInternet()
+            }
             // alertUI(title: "camera", Message: "\(photoURL)")
             
             
@@ -258,6 +270,10 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
         dismiss(animated: true, completion: nil)
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+            return false
+    }
     @objc func messageSend()
     {
         if(currentReachabilityStatus != .notReachable)
@@ -337,8 +353,6 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
     
     func orderChatAPI()
     {
-        
-        
         indicator.isHidden = false
         indicator.startAnimating()
         let parameters = ["order_help_id": chatId, "accesstoken" : Constant.APITOKEN]
@@ -399,9 +413,10 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
     }
     
     
-    func sendTextMessageAPI(comment : String , type : String )
+    func sendTextMessageeAPI(comment : String , type : String )
     {
         imgSend.isUserInteractionEnabled = false
+        self.edMessag.becomeFirstResponder()
         let strContact = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
         let parameters = ["user_id": strContact, "order_help_id": chatId, "accesstoken" : Constant.APITOKEN, "comment" : comment , "type" :type ]
         
@@ -414,7 +429,7 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
             {
                 self.edMessag.text = ""
                 self.orderChatAPI()
-                
+                self.edMessag.becomeFirstResponder()
             }
             else
             {
@@ -502,6 +517,56 @@ class OrderChatController: UIViewController, UITableViewDelegate,UITableViewData
                     }
                 }
             }
+    }
+    func sendTextMessageAPI(comment : String , type : String )
+    {
+        imgSend.isUserInteractionEnabled = false
+        self.edMessag.becomeFirstResponder()
+        let strContact = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
+        let parameters = ["user_id": strContact, "order_help_id": chatId, "accesstoken" : Constant.APITOKEN, "comment" : comment , "type" :type ]
+        
+        print("parameters",parameters)
+       
+        AF.request(Constant.baseURL + Constant.orderChatAPI , method: .post, parameters: parameters).validate().responseJSON { (response) in
+            debugPrint(response)
+            DispatchQueue.main.async {
+                self.indicator.isHidden = true
+            }
+           
+            switch response.result {
+            case .success:
+                print("near by restor success")
+                self.indicator.isHidden = true
+                if let json = response.data {
+                    do{
+                        let data = try JSON(data: json)
+                        let status = data["code"]
+                        if("\(status)" == "200")
+                        {
+                            self.edMessag.text = ""
+                            self.orderChatAPI()
+                            self.edMessag.becomeFirstResponder()
+
+                        }
+                        else
+                        {
+                            self.imgSend.isUserInteractionEnabled = true
+                            self.alertFailure(title: "Invalid", Message: "\(data["message"])")
+                        }
+                    }
+                    catch{
+                        
+                        self.indicator.isHidden = true
+                        print(error)
+                    }
+                    
+                }
+            case .failure(let error):
+                print(error)
+                
+                self.indicator.isHidden = true
+            }
+        }
     }
     
 }

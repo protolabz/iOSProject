@@ -136,7 +136,7 @@ var strRestId = ""
         }
         print("price")
         print("\(self.arrOfMenu[indexPath.row]["f_price"])")
-        let newPrice = (Double("\(self.arrOfMenu[indexPath.row]["f_price"])")!/100) * Double("10")!
+        let newPrice = (Double("\(self.arrOfMenu[indexPath.row]["f_price"])")!/100) * Double(strCommision)!
         let itemPrice = newPrice + (Double("\(self.arrOfMenu[indexPath.row]["f_price"])")!)
 
         cell2.txtPrice.text = "£"  +  "\(String(format: "%.2f", itemPrice.rounded(digits: 2)))"
@@ -450,6 +450,7 @@ var strRestId = ""
         secondViewController.strCommision = strCommision
         secondViewController.strItemName = name
         secondViewController.isSizeAvailable = Int(sizeAvailable)!
+        secondViewController.strItemCommission = Double(strCommision)!
        
          
     }

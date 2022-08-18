@@ -28,16 +28,24 @@ class ViewController: UIViewController {
     
    
         override func viewWillAppear(_ animated: Bool) {
-            print("view appear")
-            
+            print("view will appear view controller")
             if(viewLoad == 1)
             {
             if(UserDefaults.standard.string(forKey: Constant.IS_LOGGEDIN) == "1")
             {
                 if(currentReachabilityStatus != .notReachable)
                 {
+                    if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+                        {
 
-                    performSegue(withIdentifier: "home", sender: nil)
+//                    self!.viewLoad = 1
+                     performSegue(withIdentifier: "homeg", sender: nil)
+                    }
+                    else{
+//                        self!.viewLoad = 1
+              performSegue(withIdentifier: "home", sender: nil)
+                    }
+                    
                 }
                 else{
                     alertInternetMain()
@@ -65,11 +73,7 @@ class ViewController: UIViewController {
         avPlayerLayer.frame = self.view.bounds // Set bounds of avPlayerLayer
         self.view.layer.addSublayer(avPlayerLayer) // Add avPlayerLayer to view's layer.
         avPlayer.play()
-        // Play video
-        
-        
-        // Add observer for every second to check video completed or not,
-        // If video play is completed then redirect to desire view controller.
+    
         avPlayer.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1) , queue: .main) { [weak self] time in
             
             if time == avAssets.duration {
@@ -78,8 +82,20 @@ class ViewController: UIViewController {
                 {
                     if(self!.currentReachabilityStatus != .notReachable)
                     {
+//                        if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+//                            {
+//
                         self!.viewLoad = 1
-                        self!.performSegue(withIdentifier: "home", sender: nil)
+//                            self!.performSegue(withIdentifier: "homeg", sender: nil)
+//                        }
+//                        else{
+//                            self!.viewLoad = 1
+//                            self!.performSegue(withIdentifier: "home", sender: nil)
+//                        }
+                        
+                        self!.performSegue(withIdentifier: "select", sender: nil)
+
+                      
                     }
                     else{
                         self!.viewLoad = 1
@@ -128,7 +144,19 @@ extension UIViewController
                                             if(self.currentReachabilityStatus != .notReachable)
                                             {
                                                
-                                                self.performSegue(withIdentifier: "home", sender: nil)
+                                                
+//                                                    if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+//                                                        {
+//
+//                                //                    self!.viewLoad = 1
+//                                                        self.performSegue(withIdentifier: "homeg", sender: nil)
+//                                                    }
+//                                                    else{
+                                //                        self!.viewLoad = 1
+                                                        self.performSegue(withIdentifier: "select", sender: nil)
+//                                                    }
+                                                    
+                                                
                                             }
                                             else{
                                                 self.alertInternetMain()
@@ -333,10 +361,11 @@ extension UIViewController
         activityIndicator.center = ViewCenter
         activityIndicator.tag = 1000
         activityIndicator.hidesWhenStopped = false
-        activityIndicator.backgroundColor = #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1)
+        activityIndicator.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         activityIndicator.layer.cornerRadius = 5
         activityIndicator.layer.masksToBounds = true
         self.view.addSubview(activityIndicator)
+        self.view.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         //UIApplication.shared.beginIgnoringInteractionEvents()
     }
@@ -348,7 +377,7 @@ extension UIViewController
             if let activityIndicator = activity as? UIActivityIndicatorView {
                 if activityIndicator.tag == 1000 {
                     activityIndicator.stopAnimating()
-                    UIApplication.shared.endIgnoringInteractionEvents()
+                    self.view.isUserInteractionEnabled = true
                     activityIndicator.removeFromSuperview()
                 }
             }
@@ -356,14 +385,14 @@ extension UIViewController
         if array.count > 0 {
             if let activityIndicator = array[0] as? UIActivityIndicatorView {
                 activityIndicator.stopAnimating()
-                UIApplication.shared.endIgnoringInteractionEvents()
+                self.view.isUserInteractionEnabled = true
                 activityIndicator.removeFromSuperview()
             }
         }
         if let activityIndicator = self.view.subviews.filter(
             { $0.tag == 1000}).first as? UIActivityIndicatorView {
             activityIndicator.stopAnimating()
-            UIApplication.shared.endIgnoringInteractionEvents()
+            self.view.isUserInteractionEnabled = true
             activityIndicator.removeFromSuperview()
         }
     }
@@ -461,5 +490,57 @@ extension Double {
     func rounded(digits: Int) -> Double {
         let multiplier = pow(10.0, Double(digits))
         return (self * multiplier).rounded() / multiplier
+    }
+}
+extension NSAttributedString {
+    
+    /// Returns a new instance of NSAttributedString with same contents and attributes with strike through added.
+    /// - Parameter style: value for style you wish to assign to the text.
+    /// - Returns: a new instance of NSAttributedString with given strike through.
+    func withStrikeThrough(_ style: Int = 1) -> NSAttributedString {
+        let attributedString = NSMutableAttributedString(attributedString: self)
+        attributedString.addAttribute(.strikethroughStyle,
+                                      value: style,
+                                      range: NSRange(location: 0, length: string.count))
+        return NSAttributedString(attributedString: attributedString)
+    }
+}
+extension String {
+    var htmlToAttributedString: NSAttributedString? {
+        guard let data = data(using: .utf8) else { return NSAttributedString() }
+        do {
+            return try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding:String.Encoding.utf8.rawValue], documentAttributes: nil)
+        } catch {
+            return NSAttributedString()
+        }
+    }
+    var htmlToString: String {
+        return htmlToAttributedString?.string ?? ""
+    }
+}
+extension UITextField {
+    func addPaddingToTextField() {
+        let paddingView: UIView = UIView.init(frame: CGRect(x: 0, y: 0, width: 12, height: 20))
+        self.leftView = paddingView;
+        self.leftViewMode = .always;
+        self.rightView = paddingView;
+        self.rightViewMode = .always;
+
+    
+       // self.backgroundColor = UIColor.whiteColor
+        self.textColor = UIColor.black
+    }
+    
+}
+extension UIButton
+{
+    func applyGradientBtn(colors: [CGColor])
+    {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = colors
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0)
+        gradientLayer.frame = self.bounds
+        self.layer.insertSublayer(gradientLayer, at: 0)
     }
 }

@@ -11,17 +11,30 @@ import SquareInAppPaymentsSDK
 
 class CartRestaurantController: UIViewController, UITableViewDelegate,UITableViewDataSource, UIGestureRecognizerDelegate {
     
+    @IBOutlet weak var txtSpecialInstructions: UILabel!
     @IBOutlet weak var edInstruction: UITextView!
     @IBOutlet weak var txtPreviousOrder: UILabel!
     @IBAction func btnCardPayment(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
 //        didRequestPayWithCard()
         flagScreen = 3
         performSegue(withIdentifier: "card", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
     }
     @IBAction func btnApplePay(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         requestApplePayAuthorization()
+        }
+        else{
+            alertInternet()
+        }
     }
     @IBOutlet weak var btnApplepay: UIButton!
     @IBOutlet weak var btnCardPayment: UIButton!
@@ -47,7 +60,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     var strRestType = ""
     var selectedPosition = 0
     var strOrderId = ""
-    
+    var modeType = "0"
     var flagScreen = 0
     var intCouponApplied = "0"
     var pennyChecked = 0
@@ -55,11 +68,12 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     var strPennyCount = 0
     var strPaymentType = 0
     var strAmount  = ""
-    var strMinMumOrder = ""
+    var strMinMumOrder = "0"
     var strSubTotal = ""
     var instructions = ""
     var strCartId = "0"
     var strPreviousOrder = 0
+    var observerAdded = 0
     @IBOutlet weak var txtRestLocation: UILabel!
     @IBAction func imgBack(_ sender: Any) {
         
@@ -77,6 +91,17 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     @IBOutlet weak var imgPlus: UIImageView!
     
     @IBOutlet weak var txtAlertItemCount: UILabel!
+    
+    @IBOutlet weak var txtAlertItemCount1: UILabel!
+    @IBOutlet weak var viewPlusMinus1: UIView!
+    
+    @IBOutlet weak var btnAlertCancel1: UIButton!
+    @IBOutlet weak var btnAlertUpdate1: UIButton!
+    @IBOutlet weak var txtAlertItemNAme1: UILabel!
+    @IBOutlet weak var imgMinus1: UIImageView!
+    @IBOutlet weak var imgPlus1: UIImageView!
+    @IBOutlet weak var viewInnerPlusMinus1: UIView!
+
     
     @IBOutlet weak var txtVAT: UILabel!
     @IBOutlet weak var txtServiceCharges: UILabel!
@@ -134,7 +159,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
        
-        self.viewNoOrder.isHidden = true
+        self.viewNoOrder.isHidden = false
         self.viewpayment.isHidden = true
         txtPreviousOrder.isHidden = true
         viewPayment.isHidden = true
@@ -171,6 +196,11 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         viewInnerPlusMinus.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         viewInnerPlusMinus.layer.cornerRadius = 10
         
+        viewInnerPlusMinus1.layer.borderWidth = 0.5
+        viewInnerPlusMinus1.layer.masksToBounds = false
+        viewInnerPlusMinus1.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        viewInnerPlusMinus1.layer.cornerRadius = 10
+        
         edInstruction.layer.masksToBounds = true
         edInstruction.layer.backgroundColor = #colorLiteral(red: 0.9488552213, green: 0.9487094283, blue: 0.9693081975, alpha: 1)
         edInstruction.tintColor = .black
@@ -180,12 +210,15 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         edInstruction.layer.borderWidth = 0.3
         
         viewPlusMinus.isHidden = true
+        viewPlusMinus1.isHidden = true
         
         restInage.layer.cornerRadius=10
         restInage.clipsToBounds=true
         
         btnAlertCancel.layer.cornerRadius=10
         btnAlertCancel.clipsToBounds=true
+        btnAlertCancel1.layer.cornerRadius=10
+        btnAlertCancel1.clipsToBounds=true
         
         btnCardPayment.layer.cornerRadius=10
         btnCardPayment.clipsToBounds=true
@@ -201,6 +234,9 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         
         btnAlertUpdate.layer.cornerRadius=10
         btnAlertUpdate.clipsToBounds=true
+        
+        btnAlertUpdate1.layer.cornerRadius=10
+        btnAlertUpdate1.clipsToBounds=true
         
         viewApplyCoupon.isUserInteractionEnabled = true
         viewApplyCoupon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.couponCall)))
@@ -218,24 +254,50 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         imgMinus.isUserInteractionEnabled = true
         imgMinus.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnMinus)))
         
+        imgPlus1.isUserInteractionEnabled = true
+        imgPlus1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnPlus1)))
+        
+        imgMinus1.isUserInteractionEnabled = true
+        imgMinus1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnMinus1)))
+        
+        
         scrollview.isUserInteractionEnabled = true
         scrollview.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.viewPaymentClose)))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         viewpayment.isHidden = true
+        observerAdded = 0
         if(currentReachabilityStatus != .notReachable)
         {
             self.tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
             print("fetch cart detail...............")
-            fetchCartDetail()
+            modeType = "\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")"
+
+            if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+                {
+                fetchCartDetail(type : "1")
+                edInstruction.isHidden = true
+                txtSpecialInstructions.isHidden = true
+            }
+            else{
+                edInstruction.isHidden = false
+                txtSpecialInstructions.isHidden = false
+                fetchCartDetail(type : "0")
+            }
+        
         }
         else{
             alertInternet()
         }
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
     }
     override func viewWillDisappear(_ animated: Bool) {
-        self.tableView.removeObserver(self, forKeyPath: "contentSize")
+        if(observerAdded == 1)
+        {
+            self.tableView.removeObserver(self, forKeyPath: "contentSize")
+        }
     }
     
     @objc func viewPaymentClose() {
@@ -257,6 +319,8 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     }
     
     @IBAction func btnPennyApplied(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         if(pennyChecked != 1)
         {
@@ -285,22 +349,99 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             btnPennyApplied.tintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
             updatePennyAppliedAPI(strApplied: "0", flag:  0)
         }
+        }
+        else{
+            alertInternet()
+        }
     }
     
     @IBAction func btnAlertCAncel(_ sender: Any) {
         viewPlusMinus.isHidden = true
     }
     @IBAction func btnAlertUpdate(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewPlusMinus.isHidden = true
         print(txtAlertItemCount.text)
+            print("update button pressd")
+            
         let strText = txtAlertItemCount.text
         let instructions = edInstruction.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+        
+            if("\(arrOfAddToCartItem[selectedPosition]["special_offer"])" == "1")
+            {
+              let strMaxQty = Int("\(arrOfAddToCartItem[selectedPosition]["max_qty"])")
+                if(strMaxQty != 0)
+               {
+                 
+                    if(strMaxQty! < Int(strText!)!)
+                    {
+                        alertFailure(title: "Limit reached", Message: "For this special offer product you may only order for \(strMaxQty!) items ")
+                    }
+                    else{
+                        updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+                    }
+               }
+               else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+               }
+            }
+            else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+            }
+        }
+        else
+        {
+            alertInternet()
+        }
+    }
+    
+    @IBAction func btnAlertCAncel1(_ sender: Any) {
+        viewPlusMinus1.isHidden = true
+    }
+    @IBAction func btnAlertUpdate1(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
+        viewPlusMinus1.isHidden = true
+       
+            print(txtAlertItemCount1.text)
+            print("update button pressd")
+            
+        let strText = txtAlertItemCount1.text
+      
+        
+            if("\(arrOfAddToCartItem[selectedPosition]["special_offer"])" == "1")
+            {
+              let strMaxQty = Int("\(arrOfAddToCartItem[selectedPosition]["max_qty"])")
+                if(strMaxQty != 0)
+               {
+                 
+                    if(strMaxQty! < Int(strText!)!)
+                    {
+                        alertFailure(title: "Limit reached", Message: "For this special offer product you may only order for \(strMaxQty!) items ")
+                    }
+                    else{
+                        updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+                    }
+               }
+               else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+               }
+            }
+            else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+            }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     
     @IBAction func btnPlaceOrder(_ sender: Any) {
       
-     
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(strDeliveryType == "-1")
         {
 //            print("condition 1")
@@ -356,6 +497,11 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
 //            }
             
 //        }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     
     @IBAction func btnCash(_ sender: Any) {
@@ -373,8 +519,14 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         }
     }
     @IBAction func btnDeliveyOption(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         alertDelivery()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     @objc func btnPlus() {
@@ -395,13 +547,39 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             txtAlertItemCount.text = count?.description
         }
     }
+    @objc func btnPlus1() {
+        viewpayment.isHidden = true
+        var count =  Int(txtAlertItemCount1.text!)
+        count! += 1
+        txtAlertItemCount1.text = count?.description
+        //  calculateNewPrice()
+        
+        
+    }
+    @objc func btnMinus1() {
+        viewpayment.isHidden = true
+        var count =  Int(txtAlertItemCount1.text!)
+        if(count! > 0)
+        {
+            count! -= 1
+            txtAlertItemCount1.text = count?.description
+        }
+    }
     
     @objc func instCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         showAlertInstructions()
+        }
+        else{
+            alertInternet()
+        }
         
     }
     @objc func couponCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         flagScreen = 0
         if(pennyChecked != 1)
@@ -410,6 +588,10 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         }
         else{
             alertPennyAlready()
+        }
+        }
+        else{
+            alertInternet()
         }
     }
    
@@ -431,6 +613,21 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
           secondViewController.strCartId = strCartId
             secondViewController.strDeliveryType = strDeliveryType
         }
+       
+           else if(flagScreen == 5)
+            {
+                let secondViewController = segue.destination as! ProductDetailGrocery
+                
+                secondViewController.strId = "\(arrOfAddToCartItem[selectedPosition]["menu_item_id"])"
+              
+                let xs = "\(arrOfAddToCartItem[selectedPosition]["count"])"
+              
+                    secondViewController.strCount = Int(xs)!
+              
+            }
+        
+            
+        
         else
         {
             let secondViewController = segue.destination as! RestaurantController
@@ -484,9 +681,12 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         
         let cell2 = tableView.dequeueReusableCell(withIdentifier: "CartCell", for: indexPath) as! CartCell
         cell2.txtName.text = "\(self.arrOfAddToCartItem[indexPath.row]["item_name"])"
-        
+        cell2.isUserInteractionEnabled = true
+        cell2.viewUi.isUserInteractionEnabled = true
+        cell2.txtName.isUserInteractionEnabled = true
+        cell2.txtPrice.isUserInteractionEnabled = true
         strCartId = "\(arrOfAddToCartItem[indexPath.row]["cart_id"])"
-        cell2.txtIngreden.text =  "\(self.arrOfAddToCartItem[indexPath.row]["item_Ingredients"])"
+       // cell2.txtIngreden.text =  "\(self.arrOfAddToCartItem[indexPath.row]["item_Ingredients"])"
         //        let newPrice = (Double("\(self.arrOfAddToCartItem[indexPath.row]["f_price"])")!/100) * Double(strCommision)!
         if( "\(self.arrOfAddToCartItem[indexPath.row]["instruction"])".count>1)
         {
@@ -549,22 +749,69 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             cell2.imgMinus.addTarget(self, action: #selector(updateMinus(_:)), for: .touchUpInside)
         }
         cell2.selectionStyle = .none
+       
+        if(modeType == "1")
+        {
+            let tap3 = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            cell2.viewUi.isUserInteractionEnabled = true
+            cell2.viewUi.addGestureRecognizer(tap3)
+        }
+        
         return cell2
         
     }
+    @objc func handleTap(_ gesture: UITapGestureRecognizer){
+         let tapLocation = gesture.location(in: self.tableView)
+         if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation)
+         {
+             if let tappedCell = self.tableView.cellForRow(at: tapIndexPath) as? UITableViewCell
+              {
+                 print("Row Selected") // access tapped cell and its subview as
+                print(tapIndexPath.row)
+                if(self.currentReachabilityStatus != .notReachable)
+                        {
+                        selectedPosition = tapIndexPath.row
+                       flagScreen = 5
+                        performSegue(withIdentifier: "product", sender: nil)
+                        }else
+                        {
+                            alertInternet()
+                        }
+          }
+     }
+    }
     
-    
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print(",mnbvxdfghjkjhgfxzccm,nbvb")
+//        if(self.currentReachabilityStatus != .notReachable)
+//        {
+//        selectedPosition = indexPath.row
+//       flagScreen = 5
+//        performSegue(withIdentifier: "product", sender: nil)
+//        }else
+//        {
+//            alertInternet()
+//        }
+//    }
     @objc func updatePlus(_ sender: UIButton) {
+        
         viewpayment.isHidden = true
         if(self.currentReachabilityStatus != .notReachable)
         {
-            print("\(self.arrOfAddToCartItem[sender.tag]["instruction"])")
             selectedPosition = sender.tag
-            
+            if modeType == "0"
+            {
             viewPlusMinus.isHidden = false
             txtAlertItemCount.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
             edInstruction.text = "\(self.arrOfAddToCartItem[sender.tag]["instruction"])"
-            txtAlertItemNAme.text = "Update item :- \(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            txtAlertItemNAme.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            }
+            else{
+                viewPlusMinus1.isHidden = false
+                txtAlertItemCount1.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
+               
+                txtAlertItemNAme1.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            }
         }
         else{
             self.alertInternet()
@@ -591,12 +838,19 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         if(self.currentReachabilityStatus != .notReachable)
         {
             selectedPosition = sender.tag
-            
+             if modeType == "0"
+             {
             viewPlusMinus.isHidden = false
-            //            viewPlusMinus.alpha = 0.9
             edInstruction.text = "\(self.arrOfAddToCartItem[sender.tag]["instruction"])"
             txtAlertItemCount.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
-            txtAlertItemNAme.text = "Update item :- \(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            txtAlertItemNAme.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+             }
+             else{
+                viewPlusMinus1.isHidden = false
+               
+                txtAlertItemCount1.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
+                txtAlertItemNAme1.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+             }
         }
         else{
             self.alertInternet()
@@ -638,11 +892,11 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
 //        }
 //    }
     
-    func fetchCartDetail()
+    func fetchCartDetail(type : String)
     {
         arrOfAddToCartItem.removeAll()
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "type" : type]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.cartDetailAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -650,7 +904,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             
            // self.observerAdded = 1
             if("\(json["status"])" == "200")
-            {
+            { self.observerAdded = 1
                 self.viewNoOrder.isHidden = true
                 self.setDataViews(jsonData: json)
                 self.arrOfAddToCartItem.removeAll()
@@ -668,7 +922,14 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             }
             else if("\(json["status"])" == "204")
             {
-                self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                if type == "0"
+                {
+                    self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                }
+                else{
+                    self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other address")
+                }
+               
                 self.viewNoOrder.isHidden = true
                 self.setDataViews(jsonData: json)
                 self.arrOfAddToCartItem.removeAll()
@@ -723,9 +984,14 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         strRestLong = "\(jsonData["restaurant_detail"]["r_long"])"
         strRestType = "\(jsonData["restaurant_detail"]["rest_type"])"
         strMinMumOrder = "\(jsonData["restaurant_detail"]["Minimum_Order"])"
-        
+//        if modeType == "0"
+//        {
         let urlYourURL = URL (string: "\(jsonData["restaurant_detail"]["image"])")
         restInage.loadurl(url: urlYourURL!)
+//        }
+//        else{
+//            restInage.image = #imageLiteral(resourceName: "xeat")
+//        }
         
         strRestId = "\(jsonData["restaurant_detail"]["id"])"
         let address = UserDefaults.standard.string(forKey: Constant.USERADDRESS)
@@ -829,7 +1095,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     func updatePickupOptionAPI()
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "address_type" : strDeliveryType, "payment_type" : "2"]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "address_type" : strDeliveryType, "payment_type" : "2", "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -857,7 +1123,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     func updatePennyAppliedAPI(strApplied : String, flag : Int)
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "add_penny" : strApplied]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "add_penny" : strApplied, "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -885,7 +1151,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     func updateInstructionAPI(strOption : String)
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "instruction" : strOption]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "instruction" : strOption, "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -906,7 +1172,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     func updatePaymentOptionAPI(strOption : String)
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "payment_type" : strOption]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "payment_type" : strOption, "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -940,7 +1206,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
         
         let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "cart_item_id" : cartItemId,
-                          "actual_price" : actialPrice, "count" : strCount ,"price" : price , "item_instruction" : strInstruction ]
+                          "actual_price" : actialPrice, "count" : strCount ,"price" : price , "item_instruction" : strInstruction , "type" : modeType ]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -977,7 +1243,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         let strLat = UserDefaults.standard.string(forKey: Constant.USERLATITUDE)!
         let strLong = UserDefaults.standard.string(forKey: Constant.USERLONGITUDE)!
         let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "address_type" : strDeliveryType,
-                          "customer_lat" : strLat, "customer_lng" : strLong ,"order_lat" : strRestLat , "order_lng" : strRestLong, "payment_type" : "2"]
+                          "customer_lat" : strLat, "customer_lng" : strLong ,"order_lat" : strRestLat , "order_lng" : strRestLong, "payment_type" : "2", "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -999,7 +1265,14 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             }
             else if("\(json["status"])" == "204")
             {
+                
+                if self.modeType == "0"
+                {
                 self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                }
+                else{
+                    self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other address")
+                }
                 self.viewNoOrder.isHidden = true
               //  self.setDataViews(jsonData: json)
 //                self.arrOfAddToCartItem.removeAll()
@@ -1096,8 +1369,13 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             self.dismiss(animated: true, completion: nil)
             self.txtDelivery.text = "Pick up"
             self.strDeliveryType = "0"
-            
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updatePickupOptionAPI()
+            }
+            else{
+                self.alertInternet()
+            }
         }))
         }
         else if(strRestType == "2")
@@ -1108,7 +1386,13 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Delivery"
                 self.strDeliveryType = "1"
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updateDeliveyOptionAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
                 
             }))
         }
@@ -1117,7 +1401,13 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Pick up"
                 self.strDeliveryType = "0"
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updatePickupOptionAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
             }))
             
         refreshAlert.addAction(UIAlertAction(title: "Delivery", style: .default, handler: { (action: UIAlertAction!) in
@@ -1126,7 +1416,13 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
             self.dismiss(animated: true, completion: nil)
             self.txtDelivery.text = "Delivery"
             self.strDeliveryType = "1"
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updateDeliveyOptionAPI()
+            }
+            else{
+                self.alertInternet()
+            }
             
         }))
         }
@@ -1185,7 +1481,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     
     func alertCouponAlready() -> Void
     {
-        let refreshAlert = UIAlertController(title: "Coupon already applied", message: "If you want to apply pennies than applied coupon would be deleted", preferredStyle: UIAlertController.Style.alert)
+        let refreshAlert = UIAlertController(title: "Coupon already applied", message: "If you want to apply pennies then applied coupon would be deleted", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
             self.dismiss(animated: true, completion: nil)
@@ -1194,7 +1490,14 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updatePennyAppliedAPI(strApplied: "1", flag: 0)
+            }
+            else
+            {
+                self.alertInternet()
+            }
             
         }))
         
@@ -1203,7 +1506,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
     
     func alertPennyAlready() -> Void
     {
-        let refreshAlert = UIAlertController(title: "Penny already applied", message: "If you want to apply coupon than applied pennies would be deleted", preferredStyle: UIAlertController.Style.alert)
+        let refreshAlert = UIAlertController(title: "Penny already applied", message: "If you want to apply coupon then applied pennies would be deleted", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
             self.dismiss(animated: true, completion: nil)
@@ -1212,8 +1515,13 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
-            
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updatePennyAppliedAPI(strApplied: "0", flag: 1)
+            }
+            else{
+                self.alertInternet()
+            }
         }))
         
         present(refreshAlert, animated: true, completion: nil)
@@ -1260,6 +1568,7 @@ class CartRestaurantController: UIViewController, UITableViewDelegate,UITableVie
         
         present(refreshAlert, animated: true, completion: nil)
     }
+    
     
 //    func alertOnlinePayment() -> Void
 //    {

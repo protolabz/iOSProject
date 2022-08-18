@@ -35,6 +35,7 @@ class OrderStatusController: UIViewController {
     }
     var driverDeviceToken = ""
      var driverDeviceType = ""
+    var strModeType = ""
     var timer = Timer()
     
     @IBAction func btnWayToRest(_ sender: Any) {
@@ -64,8 +65,15 @@ class OrderStatusController: UIViewController {
     @IBOutlet weak var btnCancel: UIButton!
     
     @IBAction func btnCancel(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         btnCancel.isEnabled = false
+        
         cancelOrderAlert()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     @IBOutlet weak var viewMapDriver: UIView!
@@ -84,7 +92,13 @@ class OrderStatusController: UIViewController {
     
     @IBAction func btnMessage(_ sender: Any) {
         screenType = 3
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         performSegue(withIdentifier: "chat", sender: "")
+        }
+        else{
+            alertInternet()
+        }
     }
     @IBAction func btnCall(_ sender: Any) {
         guard let number = URL(string: "tel://" + strPhonNumber) else { return }
@@ -105,7 +119,13 @@ class OrderStatusController: UIViewController {
 //            _ = self.navigationController?.popViewController(animated: true)
 //            _ = self.navigationController?.popViewController(animated: true)
 //
+            if strModeType == "0"
+            {
             self.navigationController?.popToViewController((self.navigationController?.viewControllers[(self.navigationController?.viewControllers.count)! - 4])!, animated: true)
+            }
+            else{
+                self.navigationController?.popToViewController((self.navigationController?.viewControllers[(self.navigationController?.viewControllers.count)! - 3])!, animated: true)
+            }
 
         }
         else
@@ -118,8 +138,16 @@ class OrderStatusController: UIViewController {
     
     @IBOutlet weak var btnPickup: UIButton!
     @IBAction func btnPickup(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         btnPickup.isEnabled = false
+        
         orderPickupAPI()
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -161,6 +189,7 @@ class OrderStatusController: UIViewController {
         viewDriver.layer.cornerRadius = 10
         
         txtOrderId.text = "Order id #" + strOrderId
+        UserDefaults.standard.setValue(strOrderId, forKey: Constant.ORDER_ID)
         //orderCurrentStatusAPI()
         
         let nc = NotificationCenter.default
@@ -173,6 +202,8 @@ class OrderStatusController: UIViewController {
     }
 
     @objc func appMovedToForeground() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         orderCurrentStatusAPI()
         
       //  loadMapData()
@@ -180,13 +211,27 @@ class OrderStatusController: UIViewController {
            let timeAPI = UserDefaults.standard.string(forKey: Constant.RUN_ORDERSTATUS)
             if(timeAPI == "1")
             {
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 orderCurrentStatusAPI()
+                }
+                else
+                {
+                    alertInternet()
+                }
             }
            
            })
+        }
+        else
+        {
+        alertInternet()
+        }
         
     }
     override func viewWillAppear(_ animated: Bool) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         orderCurrentStatusAPI()
         
       //  loadMapData()
@@ -195,10 +240,22 @@ class OrderStatusController: UIViewController {
             if(timeAPI == "1")
             {
                
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 orderCurrentStatusAPI()
+                }
+                else
+                {
+                    alertInternet()
+                }
             }
            
            })
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -303,6 +360,7 @@ class OrderStatusController: UIViewController {
             if("\(json["code"])" == "200")
             {
                 self.btnCancel.isEnabled = true
+                UserDefaults.standard.setValue("0", forKey: Constant.ORDER_ID)
                 self.alertRootRedirection(title: "Order cancelled ", Message: "Order cancelled by you successfully")
               
             }
@@ -348,6 +406,8 @@ class OrderStatusController: UIViewController {
        
         restLat = "\(json["data"]["r_lat"])"
         restLong = "\(json["data"]["r_long"])"
+        strModeType = "\(json["data"]["type"])"
+        
         switch "\(json["data"]["status"])" {
         
         case "1":
@@ -362,24 +422,47 @@ class OrderStatusController: UIViewController {
             viewMapDriver.isHidden = true
             
         case "2":
+            if strModeType == "0"
+            {
             self.alertRootRedirection(title: "Order rejected", Message: "Your order has been rejected by restaurant. Good food always cooks. You can reorder from another restaurant")
+            }
+            else{
+                self.alertRootRedirection(title: "Order rejected", Message: "Your order has been rejected by grocery store. We wish to continue serving you with our best quality products. You may reorder.")
+            }
+            UserDefaults.standard.setValue("0", forKey: Constant.ORDER_ID)
         case "5" :
             viewMap.isHidden = true
             viewMapDriver.isHidden = false
-            imgOrderStatus2.loadGif(asset: "foodprepared1")
+          
+            if("\(json["data"]["type"])" == "1")
+            {
+                imgOrderStatus2.loadGif(asset: "grocery")
+               
+            }
+            else
+            {
+                imgOrderStatus2.loadGif(asset: "foodprepared1")
+            }
             btnCall.isHidden = true
             btnMessage.isHidden = true
             if("\(json["data"]["inDriver"])" != "2")
             {
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 if(driverAPIHit == 0)
                     {
                         self.driverDetailAPI()
-                        txtDriverStatus.text = "Your food is being prepared"
+                        txtDriverStatus.text = "Order is getting ready"
                     }
+                }
+                else
+                {
+                    alertInternet()
+                }
             }
             else{
      
-                txtDriverStatus.text = "Your food is being prepared"
+                txtDriverStatus.text = "Order is getting ready"
                 restData(json: json)
             }
         case "7":
@@ -388,8 +471,17 @@ class OrderStatusController: UIViewController {
                 viewMapDriver.isHidden = true
                 btnWayTo.isHidden = false
                 self.txtLine1.isHidden = false
-                self.txtLine1.text = "Your food is being prepared"
+                self.txtLine1.text = "Your order will be ready in few minutes"
+                if("\(json["data"]["type"])" == "1")
+                {
+                    imgOrderStatus.loadGif(asset: "grocery")
+                    btnWayTo.setTitle("Way to store", for: .normal)
+                }
+                else
+                {
                 imgOrderStatus.loadGif(asset: "foodprepared1")
+                    btnWayTo.setTitle("Way to restaurant", for: .normal)
+                }
                 self.txtLine3.isHidden = true
                 self.txtLine2.isHidden = true
                 btnCancel.isHidden = true
@@ -397,17 +489,31 @@ class OrderStatusController: UIViewController {
             else{
                 viewMap.isHidden = true
                 viewMapDriver.isHidden = false
+                if("\(json["data"]["type"])" == "1")
+                {
+                    imgOrderStatus2.loadGif(asset: "grocery")
+                }
+                else
+                {
                 imgOrderStatus2.loadGif(asset: "foodprepared1")
+                }
                 if("\(json["data"]["inDriver"])" != "2")
                 {
+                    if(self.currentReachabilityStatus != .notReachable)
+                    {
                     if(driverAPIHit == 0)
                     {
                         self.driverDetailAPI()
-                        btnMessage.isHidden = false
-                        btnCall.isHidden = false
-                        txtDriverStatus.text = "Your food is being prepared"
+                       
+                        txtDriverStatus.text = "Order is getting ready"
                         
                     }
+                    }
+                    else{
+                        alertInternet()
+                    }
+                    btnMessage.isHidden = false
+                    btnCall.isHidden = false
             }
                 else{
                    restData(json: json)
@@ -416,7 +522,7 @@ class OrderStatusController: UIViewController {
         case "8" :
             if("\(json["data"]["inDriver"])" != "2")
             {
-            self.txtLine1.text = "Your delicious food is on the way"
+            self.txtLine1.text = "Your order is on the way"
             self.txtLine3.isHidden = true
             self.txtLine2.isHidden = true
             btnCancel.isHidden = true
@@ -429,8 +535,14 @@ class OrderStatusController: UIViewController {
 //            {
                 btnMessage.isHidden = false
                 btnCall.isHidden = false
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 driverDetailAPI()
                 loadMapData()
+                }
+                else{
+                    alertInternet()
+                }
             }
             else{
                 btnOrderReceived.isHidden = false
@@ -448,8 +560,18 @@ class OrderStatusController: UIViewController {
             {
                 txtLine1.isHidden = false
                 btnWayTo.isHidden = false
+               // imgOrderStatus.loadGif(asset: "foodprepared1")
+                if("\(json["data"]["type"])" == "1")
+                {
+                    imgOrderStatus.loadGif(asset: "grocery")
+                    btnWayTo.setTitle("Way to store", for: .normal)
+                }
+                else
+                {
                 imgOrderStatus.loadGif(asset: "foodprepared1")
-                self.txtLine1.text = "Your delicious food is ready to eat"
+                    btnWayTo.setTitle("Way to restaurant", for: .normal)
+                }
+                self.txtLine1.text = "Your order is ready to collect"
                 self.txtLine3.isHidden = true
                 self.txtLine2.isHidden = true
                 btnCancel.isHidden = true
@@ -465,20 +587,40 @@ class OrderStatusController: UIViewController {
                 {
                     btnMessage.isHidden = false
                     btnCall.isHidden = false
+                    if(self.currentReachabilityStatus != .notReachable)
+                    {
                     driverDetailAPI()
+                    }
+                    else{
+                        alertInternet()
+                    }
                 }
-            }
+            } 
             
         case "10" :
             screenType = 1
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.performSegue(withIdentifier: "rating", sender: nil)
+            }
+            else{
+                alertInternet()
+            }
             
             
         case "12" :
             viewMap.isHidden = true
             viewMapDriver.isHidden = false
+           // imgOrderStatus2.loadGif(asset: "foodprepared1")
+            if("\(json["data"]["type"])" == "1")
+            {
+                imgOrderStatus2.loadGif(asset: "grocery")
+            }
+            else
+            {
             imgOrderStatus2.loadGif(asset: "foodprepared1")
-            self.txtLine1.text = "Your delicious food is on the way"
+            }
+            self.txtLine1.text = "Order is ready to collect"
             self.txtLine3.isHidden = true
             self.txtLine2.isHidden = true
             btnCancel.isHidden = true
@@ -488,8 +630,6 @@ class OrderStatusController: UIViewController {
                     if(snapshot.exists())
                    {
                             let text = (results?["READ"]) as! String
-
-
                        if(text == "1")
                        {
                            self.txtMessageReceived.isHidden = false
@@ -503,21 +643,34 @@ class OrderStatusController: UIViewController {
                })
             if("\(json["data"]["inDriver"])" != "2")
             {
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 if(driverAPIHit == 0)
                 {
                     self.driverDetailAPI()
-                    btnMessage.isHidden = false
-                    btnCall.isHidden = false
-                    txtDriverStatus.text = "Order is ready to collect"
-                    
+
                 }
+                }
+                else{
+                    alertInternet()
+                }
+                btnMessage.isHidden = false
+                btnCall.isHidden = false
+                txtDriverStatus.text = "Order is ready to collect"
         }
             else{
                 txtDriverStatus.text = "Order is ready to collect"
                 restData(json: json)
             }
         case "14" :
-            self.alertSucces(title: "Order not accepted", Message: "Your order is not accepted by restaurant. Order amount will be added in your wallet in few minutes. Explore the food from another restaurant")
+            if strModeType == "0"
+            {
+            self.alertRootRedirection(title: "Order not accepted", Message: "Your order is not accepted by restaurant. Order amount will be added in your wallet in few minutes. Explore the food from another restaurant")
+            }
+            else{
+                self.alertRootRedirection(title: "Order not accepted", Message: "Your order is not accepted by grocery store. We wish to continue serving you with our best quality products. You may reorder.")
+            }
+            UserDefaults.standard.setValue("0", forKey: Constant.ORDER_ID)
         default:
             print("default")
         }

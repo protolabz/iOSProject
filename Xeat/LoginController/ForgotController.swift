@@ -18,6 +18,7 @@ class ForgotController: UIViewController, UITextFieldDelegate, CountryPickerView
     var strDailCode = "+44"
     var strEmail = ""
     var strOTP = ""
+    var strPhone  = ""
     var pickerShow = 0
     @IBAction func btnLogin(_ sender: Any) {
        
@@ -128,6 +129,7 @@ class ForgotController: UIViewController, UITextFieldDelegate, CountryPickerView
          alertFailure(title: "Mobile Number invalid", Message: "Please enter valid mobile number")
          }
         else{
+            strPhone = edEmail.text!.trimmingCharacters(in: .whitespaces)
              strEmail = strDailCode + edEmail.text!.trimmingCharacters(in: .whitespaces)
             btnNext.isEnabled = false
            
@@ -162,13 +164,13 @@ class ForgotController: UIViewController, UITextFieldDelegate, CountryPickerView
              
             }
             
-           
     }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let secondViewController = segue.destination as! OTPController
-        secondViewController.intentName = strEmail
+        secondViewController.strDailCode = strDailCode
+        secondViewController.strPhone = strPhone
      secondViewController.intentOTP = strOTP
         secondViewController.strScreenType = "1"
         secondViewController.strPassword = ""

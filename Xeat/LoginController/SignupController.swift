@@ -140,7 +140,6 @@ class SignupController: UIViewController , SFSafariViewControllerDelegate,  Coun
         countryPicker.showCountryNameInView = false
         countryPicker.showCountryCodeInView = false
         strCountryCode = "GB"
-        
         countryPicker.setCountryByCode("GB")
         btnSignUp.layer.cornerRadius=10
         btnSignUp.clipsToBounds=true
@@ -175,6 +174,7 @@ class SignupController: UIViewController , SFSafariViewControllerDelegate,  Coun
         
         _ = navigationController?.popViewController(animated: true)
     }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         //self.view.endEditing(true)
@@ -273,6 +273,11 @@ class SignupController: UIViewController , SFSafariViewControllerDelegate,  Coun
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(otpScreen == 1)
         {
+            print("prepare email")
+            print(strEmail)
+            print(strName)
+            print(strEmail)
+        
         let secondViewController = segue.destination as! OTPController
         secondViewController.intentName = strName
             secondViewController.strDailCode = strDailCode

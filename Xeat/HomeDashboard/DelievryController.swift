@@ -20,8 +20,14 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
     
    // var selectedPosition = ""
     @IBAction func btnSaveAddress(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         btnSaveAddress.isEnabled = false
         savePrimaryAPI(position : selectedndex)
+        }
+        else{
+            alertInternet()
+        }
     }
     var screenType = false
     var selectedndex = 0
@@ -30,7 +36,14 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
     var jsonAddress : [DatumAddressList] = []
     
     @IBAction func btnNewAddress(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         addAddressTap()
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     @IBOutlet weak var btnNew: UIButton!
     override func viewDidLoad() {
@@ -49,7 +62,13 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
             self.txtCurrentAddress.text =  UserDefaults.standard.string(forKey: Constant.USERADDRESS)
         }
         }
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         getAddressListAPI()
+        }
+        else{
+            alertInternet()
+        }
     }
     
     
@@ -67,7 +86,7 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
     }
     func initView()
     {
-        
+        indicator.isHidden = true
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
 //        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil;
         btnSaveAddress.isHidden = true
@@ -111,8 +130,14 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
             alertUIGuestUser()
         }
         else{
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             screenType = false
             performSegue(withIdentifier: "addaddress", sender: nil)
+            }
+            else{
+                alertInternet()
+            }
         }
        
        
@@ -159,10 +184,15 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
     
     @objc func editTap(_ sender: UIButton)
     {
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         selectedndex = sender.tag
         screenType = true
         performSegue(withIdentifier: "editaddress", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
       
     }
     
@@ -206,12 +236,7 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
         APIsManager.shared.requestService(withURL: Constant.savePrimaryAddressAPI, method: .post, param: param, viewController: self) { (json) in
             print(json)
             self.btnSaveAddress.isHidden = true
-            if("\(json["code"])" == "201")
-            {
-                self.btnSaveAddress.isEnabled = true
-                self.alertSucces(title: "Wait for a moment", Message: "\(json["message"])")
-            }
-            else
+            if("\(json["code"])" == "200")
             {
                 self.btnSaveAddress.isEnabled = true
                 UserDefaults.standard.set(self.jsonAddress[position].name + ", " + self.jsonAddress[position].address
@@ -223,6 +248,13 @@ class DelievryController: UIViewController,  UITableViewDelegate,UITableViewData
                 self.txtCurrentAddress.text = self.jsonAddress[position].name + ", " + self.jsonAddress[position].address
                     + ", " + self.jsonAddress[position].hte  + " " +  self.jsonAddress[position].phoneNumber
                 self.tableView.reloadData()
+                self.tabBarController?.selectedIndex = 0
+               
+            }
+            else
+            {
+                self.btnSaveAddress.isEnabled = true
+                self.alertSucces(title: "Wait for a moment", Message: "\(json["message"])")
             }
             
         }

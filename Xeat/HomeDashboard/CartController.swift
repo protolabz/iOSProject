@@ -17,16 +17,28 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     
     @IBOutlet weak var viewPayment: UIView!
     @IBAction func btnCardPayment(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         print("card call")
         flagScreen = 3
         performSegue(withIdentifier: "card", sender: nil)
+        }
+        else{
+            alertInternet()
+        }
         //didRequestPayWithCard()
     }
     @IBAction func btnApplePay(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         print("apple call")
         viewpayment.isHidden = true
         requestApplePayAuthorization()
+        }
+        else{
+            alertInternet()
+        }
     }
     @IBOutlet weak var txtTotalPay: UILabel!
     @IBOutlet weak var btnApplepay: UIButton!
@@ -62,10 +74,10 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     var strPennyCount = 0
     var strPaymentType = 0
     var strAmount  = ""
-    var strMinMumOrder = ""
+    var strMinMumOrder = "0"
     var sizeArray = 0
     var strSubTotal = ""
-    
+    var modeType = "0"
     var strCartId = "0"
     var strPreviousOrder = 0
     @IBOutlet weak var txtRestLocation: UILabel!
@@ -81,8 +93,18 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     @IBOutlet weak var imgPlus: UIImageView!
     
     @IBOutlet weak var txtAlertItemCount: UILabel!
+    @IBOutlet weak var txtAlertItemCount1: UILabel!
+    @IBOutlet weak var viewPlusMinus1: UIView!
     
+    @IBOutlet weak var btnAlertCancel1: UIButton!
+    @IBOutlet weak var btnAlertUpdate1: UIButton!
+    @IBOutlet weak var txtAlertItemNAme1: UILabel!
+    @IBOutlet weak var imgMinus1: UIImageView!
+    @IBOutlet weak var imgPlus1: UIImageView!
+    @IBOutlet weak var viewInnerPlusMinus1: UIView!
+
     
+    @IBOutlet weak var txtSpecialInstructions: UILabel!
     @IBOutlet weak var viewInnerPlusMinus: UIView!
     @IBOutlet weak var txtDeliveryLocation: UILabel!
     @IBOutlet weak var txtRestName: UILabel!
@@ -136,7 +158,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     
     func initViews()
     {
-        self.viewNoOrder.isHidden = true
+        self.viewNoOrder.isHidden = false
         self.viewpayment.isHidden = true
         txtPreviousOrder.isHidden = true
         viewPayment.isHidden = true
@@ -180,6 +202,14 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         edInstruction.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         edInstruction.layer.borderWidth = 0.3
         
+        
+        viewInnerPlusMinus1.layer.borderWidth = 0.5
+        viewInnerPlusMinus1.layer.masksToBounds = false
+        viewInnerPlusMinus1.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        viewInnerPlusMinus1.layer.cornerRadius = 10
+        
+        viewPlusMinus1.isHidden = true
+        
         btnApplepay.layer.cornerRadius=10
         btnApplepay.clipsToBounds=true
         
@@ -188,6 +218,8 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         btnCancelPayment.layer.cornerRadius=10
         btnCancelPayment.clipsToBounds=true
+        btnAlertCancel1.layer.cornerRadius=10
+        btnAlertCancel1.clipsToBounds=true
         
         btnPlaceOrder.layer.cornerRadius=10
         btnPlaceOrder.clipsToBounds=true
@@ -204,6 +236,8 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         btnAlertUpdate.layer.cornerRadius=10
         btnAlertUpdate.clipsToBounds=true
+        btnAlertUpdate1.layer.cornerRadius=10
+        btnAlertUpdate1.clipsToBounds=true
         
         viewApplyCoupon.isUserInteractionEnabled = true
         viewApplyCoupon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.couponCall)))
@@ -220,6 +254,12 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         imgMinus.isUserInteractionEnabled = true
         imgMinus.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnMinus)))
+     
+        imgPlus1.isUserInteractionEnabled = true
+        imgPlus1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnPlus1)))
+        
+        imgMinus1.isUserInteractionEnabled = true
+        imgMinus1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.btnMinus1)))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -230,7 +270,17 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             
             self.tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
             arrOfAddToCartItem.removeAll()
-            fetchCartDetail()
+            modeType =  "\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "2")"
+            if("\(UserDefaults.standard.string(forKey: Constant.SELECTION_MODE) ?? "1")" == "1")
+                {
+                fetchCartDetail(type : "1")
+//                edInstruction.isHidden = true
+//                txtSpecialInstructions.isHidden = true
+            }
+            else{
+                fetchCartDetail(type : "0")
+            }
+           
         }
         else{
             alertInternet()
@@ -256,6 +306,8 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     }
     
     @IBAction func btnPennyApplied(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         if(pennyChecked != 1)
         {
@@ -284,20 +336,113 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             btnPennyApplied.tintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
             updatePennyAppliedAPI(strApplied: "0", flag:  0)
         }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
-    
+    @objc func btnPlus1() {
+        viewpayment.isHidden = true
+        var count =  Int(txtAlertItemCount1.text!)
+        count! += 1
+        txtAlertItemCount1.text = count?.description
+        //  calculateNewPrice()
+        
+        
+    }
+    @objc func btnMinus1() {
+        viewpayment.isHidden = true
+        var count =  Int(txtAlertItemCount1.text!)
+        if(count! > 0)
+        {
+            count! -= 1
+            txtAlertItemCount1.text = count?.description
+        }
+    }
+    @IBAction func btnAlertCAncel1(_ sender: Any) {
+        viewPlusMinus1.isHidden = true
+    }
+    @IBAction func btnAlertUpdate1(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
+        viewPlusMinus1.isHidden = true
+        print(txtAlertItemCount1.text)
+            print("update button pressd")
+            
+        let strText = txtAlertItemCount1.text
+      
+        
+            if("\(arrOfAddToCartItem[selectedPosition]["special_offer"])" == "1")
+            {
+              let strMaxQty = Int("\(arrOfAddToCartItem[selectedPosition]["max_qty"])")
+                if(strMaxQty != 0)
+               {
+                 
+                    if(strMaxQty! < Int(strText!)!)
+                    {
+                        alertFailure(title: "Limit reached", Message: "For this special offer product you may only order for \(strMaxQty!) items ")
+                    }
+                    else{
+                        updateItemCountAPI(strCount : strText! , strInstruction:  "" )
+                    }
+               }
+               else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  "" )
+               }
+            }
+            else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  "" )
+            }
+        }
+        else
+        {
+            alertInternet()
+        }
+    }
     @IBAction func btnAlertCAncel(_ sender: Any) {
         viewPlusMinus.isHidden = true
     }
     @IBAction func btnAlertUpdate(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewPlusMinus.isHidden = true
-        print(txtAlertItemCount.text)
+       
+            
         let strText = txtAlertItemCount.text
         let instructions = edInstruction.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+        
+            if("\(arrOfAddToCartItem[selectedPosition]["special_offer"])" == "1")
+            {
+              let strMaxQty = Int("\(arrOfAddToCartItem[selectedPosition]["max_qty"])")
+                if(strMaxQty != 0)
+               {
+                 
+                    if(strMaxQty! < Int(strText!)!)
+                    {
+                        alertFailure(title: "Limit reached", Message: "For this special offer product you may only order for \(strMaxQty!) items ")
+                    }
+                    else{
+                        updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+                    }
+               }
+               else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+               }
+            }
+            else{
+                updateItemCountAPI(strCount : strText! , strInstruction:  instructions )
+            }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     
     @IBAction func btnPlaceOrder(_ sender: Any) {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         if(strDeliveryType == "-1")
         {
             alertFailure(title: "Delivery Options", Message: "Please select delivery option type before proceeding")
@@ -310,7 +455,6 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         }
         else if(strPreviousOrder == 1)
         {
-            
             btnPlaceOrder.isEnabled = false
             btnPlaceOrder.alpha = 0.5
             alertFailure(title: "Already ongoing order", Message: "It seems you are having one onging order. Please wait until the previous order will not be completed")
@@ -346,7 +490,11 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
 //            {
 //                alertFailure(title: "Payment type", Message: "Please select payment type before proceeding")
 //            }
-//        }
+        }
+        else
+        {
+            alertInternet()
+        }
     }
     
     @IBAction func btnCash(_ sender: Any) {
@@ -374,8 +522,6 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         count! += 1
         txtAlertItemCount.text = count?.description
         //  calculateNewPrice()
-        
-        
     }
     @objc func btnMinus() {
         viewpayment.isHidden = true
@@ -393,6 +539,8 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
     }
     @objc func couponCall() {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         viewpayment.isHidden = true
         flagScreen = 0
         if(pennyChecked != 1)
@@ -402,10 +550,15 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         else{
             alertPennyAlready()
         }
+        }
+        else{
+            alertInternet()
+        }
     }
     @objc func restCall() {
-        flagScreen = 1
-        performSegue(withIdentifier: "menu", sender: nil)
+        self.tabBarController?.selectedIndex = 0
+//        flagScreen = 1
+//        performSegue(withIdentifier: "menu", sender: nil)
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(flagScreen == 0)
@@ -425,6 +578,16 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
           secondViewController.strCartId = strCartId
             secondViewController.strDeliveryType = strDeliveryType
         }
+        else if(flagScreen == 5)
+         {
+           
+             let secondViewController = segue.destination as! ProductDetailGrocery
+            secondViewController.strId = "\(arrOfAddToCartItem[selectedPosition]["menu_item_id"])"
+            secondViewController.strCount = Int("\(arrOfAddToCartItem[selectedPosition]["count"])")!
+                          
+//                     let vala = "\(arrOfAddToCartItem[i]["count"])"
+//                     count += Int(vala)!
+      }
         else
         {
             let secondViewController = segue.destination as! RestaurantController
@@ -441,22 +604,22 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 switch arrOfAddToCartItem.count {
                 case 1 :
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 100
+                    self.tblHeight.constant = 110
                 case 2:
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 150
+                    self.tblHeight.constant = 160
                 case 3 :
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 220
+                    self.tblHeight.constant = 230
                 case 4 :
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 270
+                    self.tblHeight.constant = 280
                 case 5 :
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 370
+                    self.tblHeight.constant = 380
                 case 6 :
                     let newSize  = newValue as! CGSize
-                    self.tblHeight.constant = 600
+                    self.tblHeight.constant = 610
                 default:
                     let newSize  = newValue as! CGSize
                     self.tblHeight.constant = 600
@@ -481,6 +644,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         let cell2 = tableView.dequeueReusableCell(withIdentifier: "CartCell", for: indexPath) as! CartCell
         if self.viewIfLoaded?.window != nil {
+            print("\(self.arrOfAddToCartItem[indexPath.row]["menu_item_id"])")
             cell2.txtName.text = "\(self.arrOfAddToCartItem[indexPath.row]["item_name"])"
             
             strCartId = "\(arrOfAddToCartItem[indexPath.row]["cart_id"])"
@@ -489,7 +653,10 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             let itemPrice = (Double("\(self.arrOfAddToCartItem[indexPath.row]["total_price"])")!)
             if( "\(self.arrOfAddToCartItem[indexPath.row]["instruction"])".count>1)
             {
+                if("\(self.arrOfAddToCartItem[indexPath.row]["instruction"])" != "null")
+                {
             cell2.txtInstruction.text = "Instructions : "  + " " + "\(self.arrOfAddToCartItem[indexPath.row]["instruction"])"
+            }
             }
             else
             {
@@ -525,7 +692,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 cell2.txtIngreden.text = "\(finalAddOn)"
                 
             }
-            
+    
             else
             {
                 cell2.txtIngreden.text = ""
@@ -551,18 +718,42 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+       if(modeType == "1" )
+       {
+        if(self.currentReachabilityStatus != .notReachable)
+        {
+            selectedPosition = indexPath.row
+            print("\(arrOfAddToCartItem[selectedPosition]["menu_item_id"])")
+       
+       flagScreen = 5
+        performSegue(withIdentifier: "product", sender: nil)
+        }else
+        {
+            alertInternet()
+        }
+    }
+    }
     
     @objc func updatePlus(_ sender: UIButton) {
+        
         viewpayment.isHidden = true
         if(self.currentReachabilityStatus != .notReachable)
         {
-            print("\(self.arrOfAddToCartItem[sender.tag]["instruction"])")
             selectedPosition = sender.tag
-            
+            if modeType == "0"
+            {
             viewPlusMinus.isHidden = false
-            edInstruction.text = "\(self.arrOfAddToCartItem[sender.tag]["instruction"])"
             txtAlertItemCount.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
-            txtAlertItemNAme.text = "Update item :- \(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            edInstruction.text = "\(self.arrOfAddToCartItem[sender.tag]["instruction"])"
+            txtAlertItemNAme.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            }
+            else{
+                viewPlusMinus1.isHidden = false
+                txtAlertItemCount1.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
+               
+                txtAlertItemNAme1.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            }
         }
         else{
             self.alertInternet()
@@ -590,23 +781,29 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         if(self.currentReachabilityStatus != .notReachable)
         {
             selectedPosition = sender.tag
-            
+             if modeType == "0"
+             {
             viewPlusMinus.isHidden = false
             edInstruction.text = "\(self.arrOfAddToCartItem[sender.tag]["instruction"])"
-            //            viewPlusMinus.alpha = 0.9
             txtAlertItemCount.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
-            txtAlertItemNAme.text = "Update item :- \(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+            txtAlertItemNAme.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+             }
+             else{
+                viewPlusMinus1.isHidden = false
+               
+                txtAlertItemCount1.text = "\(self.arrOfAddToCartItem[sender.tag]["count"])"
+                txtAlertItemNAme1.text = "\(self.arrOfAddToCartItem[sender.tag]["item_name"])"
+             }
         }
         else{
             self.alertInternet()
         }
     }
-    
-    func fetchCartDetail()
+    func fetchCartDetail(type : String)
     {
         arrOfAddToCartItem.removeAll()
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN , "type" : type]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.cartDetailAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -632,7 +829,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             }
             else if("\(json["status"])" == "204")
             {
-                self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                if self.modeType == "0"
+                {
+                self.alertAddressOutReach(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                }
+                else{
+                    self.alertAddressOutReach(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other address")
+                }
                 self.viewNoOrder.isHidden = true
                 self.setDataViews(jsonData: json)
                 self.arrOfAddToCartItem.removeAll()
@@ -687,9 +890,15 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         strRestType = "\(jsonData["restaurant_detail"]["rest_type"])"
         strMinMumOrder = "\(jsonData["restaurant_detail"]["Minimum_Order"])"
         
-        
+//        if modeType == "0"
+//        {
         let urlYourURL = URL (string: "\(jsonData["restaurant_detail"]["image"])")
         restInage.loadurl(url: urlYourURL!)
+//        }
+//        else{
+//            restInage.image = #imageLiteral(resourceName: "xeat")
+//        }
+        
         
         strRestId = "\(jsonData["restaurant_detail"]["id"])"
         
@@ -748,7 +957,6 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             btnPennyApplied.tintColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
             pennyChecked = 0
         }
-        
         
         
         if("\(jsonData["coupon_applied"])" == "1")
@@ -818,10 +1026,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         }
     }
     
+    
+
+    
     func updatePennyAppliedAPI(strApplied : String, flag : Int)
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "add_penny" : strApplied]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "add_penny" : strApplied, "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -849,7 +1060,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     func updateInstructionAPI(strOption : String)
     {
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
-        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "instruction" : strOption]
+        let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "instruction" : strOption, "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -905,7 +1116,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         let strUserId = UserDefaults.standard.string(forKey: Constant.USER_UNIQUE_ID)!
         
         let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "cart_item_id" : cartItemId,
-                          "actual_price" : actialPrice, "count" : strCount ,"price" : price, "item_instruction" : strInstruction  ]
+                          "actual_price" : actialPrice, "count" : strCount ,"price" : price, "item_instruction" : strInstruction , "type" : modeType ]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -952,7 +1163,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         let strLat = UserDefaults.standard.string(forKey: Constant.USERLATITUDE)!
         let strLong = UserDefaults.standard.string(forKey: Constant.USERLONGITUDE)!
         let parameters = ["user_id": strUserId, "accesstoken" : Constant.APITOKEN, "address_type" : strDeliveryType,
-                          "customer_lat" : strLat, "customer_lng" : strLong ,"order_lat" : strRestLat , "order_lng" : strRestLong, "payment_type" : "2"]
+                          "customer_lat" : strLat, "customer_lng" : strLong ,"order_lat" : strRestLat , "order_lng" : strRestLong, "payment_type" : "2", "type" : modeType]
         
         print("parameters",parameters)
         APIsManager.shared.requestService(withURL: Constant.updateAddToCartAPI, method: .post, param: parameters, viewController: self) { (json) in
@@ -974,7 +1185,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             }
             else if("\(json["status"])" == "204")
             {
-                self.alertSucces(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                if self.modeType == "0"
+                {
+                self.alertAddressOutReach(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other restaurant")
+                }
+                else{
+                    self.alertAddressOutReach(title: "Address out of reach", Message: "On the selected delivery address, we can't deliver order. Please select any other address")
+                }
 //                self.viewNoOrder.isHidden = true
 //              //  self.setDataViews(jsonData: json)
 //                self.arrOfAddToCartItem.removeAll()
@@ -1072,8 +1289,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Pick up"
                 self.strDeliveryType = "0"
-                
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updatePickupOptionAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
             }))
         }
         else if(strRestType == "2")
@@ -1084,7 +1306,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Delivery"
                 self.strDeliveryType = "1"
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updateDeliveyOptionAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
                 
             }))
         }
@@ -1093,7 +1321,13 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Pick up"
                 self.strDeliveryType = "0"
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updatePickupOptionAPI()
+                }
+                else{
+                    self.alertInternet()
+                }
             }))
             
             refreshAlert.addAction(UIAlertAction(title: "Delivery", style: .default, handler: { (action: UIAlertAction!) in
@@ -1102,7 +1336,14 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
                 self.dismiss(animated: true, completion: nil)
                 self.txtDelivery.text = "Delivery"
                 self.strDeliveryType = "1"
+                if(self.currentReachabilityStatus != .notReachable)
+                {
                 self.updateDeliveyOptionAPI()
+                }
+                else
+                {
+                    self.alertInternet()
+                }
                 
             }))
         }
@@ -1158,9 +1399,30 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     }
     
     
+    func alertAddressOutReach(title : String, Message : String) -> Void
+    {
+        
+        let refreshAlert = UIAlertController(title: title, message: Message, preferredStyle: UIAlertController.Style.alert)
+        
+        
+//        refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
+//            self.dismiss(animated: true, completion: nil)
+//        }))
+        
+        
+        refreshAlert.addAction(UIAlertAction(title: "Change address", style: .default, handler: { (action: UIAlertAction!) in
+            //            self.logoutApi()
+            self.tabBarController?.selectedIndex = 1
+            
+        }))
+        
+        present(refreshAlert, animated: true, completion: nil)
+    }
+    
+    
     func alertCouponAlready() -> Void
     {
-        let refreshAlert = UIAlertController(title: "Coupon already applied", message: "If you want to apply pennies than applied coupon would be deleted", preferredStyle: UIAlertController.Style.alert)
+        let refreshAlert = UIAlertController(title: "Coupon already applied", message: "If you want to apply pennies then applied coupon would be deleted", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
             self.dismiss(animated: true, completion: nil)
@@ -1169,7 +1431,14 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updatePennyAppliedAPI(strApplied: "1", flag: 0)
+            }
+            else
+            {
+                self.alertInternet()
+            }
             
         }))
         
@@ -1178,7 +1447,7 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     
     func alertPennyAlready() -> Void
     {
-        let refreshAlert = UIAlertController(title: "Penny already applied", message: "If you want to apply coupon than applied pennies would be deleted", preferredStyle: UIAlertController.Style.alert)
+        let refreshAlert = UIAlertController(title: "Penny already applied", message: "If you want to apply coupon then applied pennies would be deleted", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "No", style: .default, handler: { (action: UIAlertAction!) in
             self.dismiss(animated: true, completion: nil)
@@ -1187,8 +1456,14 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             //            self.logoutApi()
-            
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.updatePennyAppliedAPI(strApplied: "0", flag: 1)
+            }
+            else
+            {
+                self.alertInternet()
+            }
         }))
         
         present(refreshAlert, animated: true, completion: nil)
@@ -1214,7 +1489,14 @@ class CartController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         let refreshAlert = UIAlertController(title: "Pay via", message: "Select the payment method to pay and place your order", preferredStyle: UIAlertController.Style.alert)
         
         refreshAlert.addAction(UIAlertAction(title: "Pay with card", style: .default, handler: { (action: UIAlertAction!) in
+            if(self.currentReachabilityStatus != .notReachable)
+            {
             self.didRequestPayWithCard()
+            }
+            else
+            {
+                self.alertInternet()
+            }
         }))
        
         

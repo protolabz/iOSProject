@@ -38,8 +38,12 @@ static let baseURL = "https://xeat.co.uk/backend/"
     static let cuisine_restdetail = "api/cuisine_restdetail"
     static let categoryMenuListAPI = "api/category_menu_list"
     
-    
     static let groceryFoodImageAPI = "api/grocery_images"
+    static let groceryProductsAPI = "api/grocery_products"
+    static let sliderImagesAPI = "api/slider_image"
+    static let subCategoryAPI = "api/listof_subdepartment_category"
+    static let singleProduct = "api/grocery_products_details"
+
     
     static let deleteAddressAPI = "API/users.php/delete_addres"
     static let orderHistoryApi = "api/order_history_detail"
@@ -74,11 +78,15 @@ static let baseURL = "https://xeat.co.uk/backend/"
     static let orderRatingDetail = "API/users.php/get_rating"
     static let doRatingAPI = "API/users.php/do_rating"
     static let searchMenuAPI = "api/search_menulist"
-    static let createCardAPI = "api/create_card"
+    static let createCardAPI = "api/create_card_test"
     static let cardListingAPI = "api/listof_cards"
-    static let cardPayment = "api/card_payment"
+    static let cardPayment = "api/card_payment_test"
     static let promotionList = "api/promotion_listcoupon"
-
+    static let mainDepartment = "api/listof_maindepartment"
+    
+    static let cartDeleteModeChange = "api/modechange_cart_delete"
+    static let searchGrocery = "api/search_grocery"
+    
     static let searchAPI = "API/users.php/search"
     static let topCategoryItemAPI = "API/users.php/top_cat_res"
 
@@ -99,5 +107,11 @@ static let baseURL = "https://xeat.co.uk/backend/"
     static let RUN_ORDERSTATUS = "run_orderstatusAPI"
     static let ONGOING_ORDERAPIHIT = "ONGOING_ORDERAPIHIT"
     static let LOCATIONSCREEN = "locationscreen"
+    static let SELECTION_MODE = "selectionMode"
+    static let CART_ID = "CART_ID"
+    static let ORDER_ID = "order_id"
+    static let AGE_LIMIT = "age_limit"
+    static let ORDER_COUNT = "ordercount"
+
 
 }

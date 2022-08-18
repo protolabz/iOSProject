@@ -33,8 +33,13 @@ class OrderDetailController: UIViewController {
         viewBill.layer.masksToBounds = false
         viewBill.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         viewBill.layer.cornerRadius = 10
-        
+        if(self.currentReachabilityStatus != .notReachable)
+        {
         ongoingOrderDetailAPI()
+        }
+        else{
+            alertInternet()
+        }
        
     }
     
